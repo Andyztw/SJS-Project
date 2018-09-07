@@ -1,0 +1,38 @@
+import React, { Component, Fragment } from "react";
+import { Header, Footer } from "./Layout";
+import TestTable from "./APITest/TestTable";
+import LoginForm from "./Dialogues/LoginForm";
+import DisableTabs from "./Layout/DisableTabs";
+import Forms from "./Dialogues/Forms";
+//import GetJSON from "./BackEnd /GetJSON";
+//import PostJSON from "./BackEnd /PostJSON";
+import AddAPI from "./APITest/AddAPI";
+import LogIn from "./Dialogues/Login";
+
+export default class extends Component {
+  constructor() {
+    super();
+    this.state = {
+      login: false,
+      loginName: "",
+      privilege: "normal"
+    };
+  }
+  render() {
+    return (
+      <Fragment>
+        <Header />
+        <AddAPI />
+        {this.state.login ? (
+          <Fragment>
+            <TestTable />
+          </Fragment>
+        ) : (
+          <LogIn/>
+        )}
+
+        <Footer />
+      </Fragment>
+    );
+  }
+}
