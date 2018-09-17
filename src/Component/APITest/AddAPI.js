@@ -169,6 +169,10 @@ class AddAPI extends Component {
       });
   };
 
+  handleAddAPI(){
+    console.log("inside handle api")
+  }
+
   // handleParaOnDelete = id =>{
   //   this.setState(({ paraList }) => ({
   //     paraList: paraList.filter(ex => ex.id !== id),
@@ -196,11 +200,26 @@ class AddAPI extends Component {
 
     return (
       <div>
+      <Grid container spacing={8}>
+        <Grid item xs={12} sm={10}>
         <Typography variant="display1" gutterBottom>
           Adding A new API into the System
         </Typography>
+        </Grid>
+        <Grid item xs={12} sm={2}>
+        <Button
+              variant="contained"
+              color="secondary"
+              className={classes.button}
+              onClick={() =>{this.handleAddAPI()
+                          }}
+            >
+              Add API Now
+            </Button>
+        
+        </Grid>
 
-        <Grid container spacing={8}>
+        
           <Grid item xs={12}>
             <Typography variant="title">Add API Path</Typography>
           </Grid>

@@ -174,6 +174,9 @@ class EditAPI extends Component {
       });
   };
 
+  handleSaveAPI(){
+    console.log("inside saving api")
+  }
   // handleParaOnDelete = id =>{
   //   this.setState(({ paraList }) => ({
   //     paraList: paraList.filter(ex => ex.id !== id),
@@ -201,15 +204,30 @@ class EditAPI extends Component {
 
     return (
       <div>
-        <Typography variant="display1" gutterBottom>
-          Editing current API
-        </Typography>
-
         <Grid container spacing={8}>
+         <Grid item xs={12} sm={10}>
+         <Typography variant="display1" gutterBottom>
+          Editing current API
+          </Typography>
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.button}
+              onClick={() =>{this.handleSaveAPI()
+                          }}
+            >
+              Save Change 
+            </Button>
+        
+            </Grid>
+
           <Grid item xs={12}>
             <Typography variant="title">Edit API Path</Typography>
           </Grid>
 
+          
           <Grid item xs={12} sm={2}>
             <TextField
               id="Method"

@@ -79,12 +79,12 @@ class LogIn extends Component {
      method: 'POST',
      headers: {
              //"Content-Type": "application/json; charset=utf-8",
-              "Content-Type": "application/x-www-form-urlencoded",
+              //"Content-Type": "application/x-www-form-urlencoded",
               //Accept : 'application/json',
-              //'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
          },
-    //body: JSON.stringify({"username": "test", "password": "test"}),
-    body: "username="+this.state.userName+"&password="+this.state.Pword,
+    body: JSON.stringify({"username": "test", "password": "test"}),
+    //body: "username="+this.state.userName+"&password="+this.state.Pword,
   }).then(function(response) {
     return response.json();
   }).then(function(data) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -19,6 +19,9 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import Button from "@material-ui/core/Button";
+import CachedIcon from '@material-ui/icons/Cached';
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import EditIcon from '@material-ui/icons/Edit'
 
 let counter = 0;
 function createData(name, API, lastRun, FPass, UpPer) {
@@ -45,10 +48,50 @@ const rows = [
   { id: "UpTime", numeric: true, disablePadding: false, label: "Up Time %" }
 ];
 
-class EnhancedTableHead extends React.Component {
+class EnhancedTableHead extends Component {
+    state = {
+      data: [],
+      isLoading: true
+    };
+
+    // componentWillMount() { 
+    //   this.testDash();
+    // } 
+  
+    testDash(){
+    let currentCom = this;  
+    let url = "https://www.nzbeta.com/";
+    let myDash = {};
+    console.log(JSON.stringify({"token": localStorage.getItem('jwtToken')}))  
+     fetch(url+'api/v1/dashboard', {
+       method: 'POST',
+       headers: {
+               //"Content-Type": "application/json; charset=utf-8",
+                "Content-Type": "application/x-www-form-urlencoded",
+                //"Accept" : 'application/json',
+                //'Content-Type': 'application/json'
+           },
+      //body: JSON.stringify({"token": localStorage.getItem('jwtToken')}),
+      body: "token="+localStorage.getItem('jwtToken'),
+    }).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      console.log("in testDash setting states")
+        console.log(data.data)
+        myDash = data.data;
+        currentCom.setState({data: myDash, isLoading : false})
+        console.log("after setting state")
+        console.log(currentCom.state)
+        console.log(new Date(1537138807723).toLocaleString())
+    });
+  }    
+
+  
   createSortHandler = property => event => {
     this.props.onRequestSort(event, property);
   };
+
+
 
   render() {
     const {
@@ -130,7 +173,17 @@ const toolbarStyles = theme => ({
   },
   title: {
     flex: "0 0 auto"
-  }
+  },
+  button: {
+    margin: theme.spacing.unit,
+    width: 200
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 30,
+  },
 });
 
 let EnhancedTableToolbar = props => {
@@ -145,48 +198,53 @@ let EnhancedTableToolbar = props => {
       <div className={classes.actions}>
         {numSelected > 0 ? (
           <div className="AppBarButtons">
+          <Tooltip title="Refresh display">
+              <Button variant="contained" aria-label="Refresh"
+              className={classes.button}>
+                Refresh Now 
+                <CachedIcon className={classes.rightIcon} />
+              </Button>
+            </Tooltip>
             <Tooltip title="Run Selected Test">
               <Button
                 variant="contained"
                 color="primary"
                 aria-label="Selected Run"
+                className={classes.button}
               >
-                Run
+                Run {" "+numSelected+ " API"}
+                <PlayArrowIcon className={classes.rightIcon} />
               </Button>
             </Tooltip>
-            <Tooltip title="Delete selected test">
-              <Button variant="contained" color="primary" aria-label="Delete">
-                Delete
-              </Button>
-            </Tooltip>
-            <Tooltip title="Run All test">
+            {numSelected === 1 ?(
+            <Tooltip title="Edit selected API">
               <Button
                 variant="contained"
-                color="secondary"
-                aria-label="Run All"
+                color="primary"
+                aria-label="Edit"
+                className={classes.button}
               >
-                Run all
+                Edit API
+                <EditIcon className={classes.rightIcon} />
+              </Button>
+            </Tooltip>): null}
+            <Tooltip title="Delete selected test">
+              <Button variant="contained" color="secondary" aria-label="Delete"
+              className={classes.button}>
+                Delete {" "+numSelected+ " API"}
+                <DeleteIcon className={classes.rightIcon} />
               </Button>
             </Tooltip>
+            
           </div>
         ) : (
           <div className="AppBarButtons">
-            <Tooltip title="Add API">
-              <Button
-                variant="contained"
-                color="secondary"
-                aria-label="Add API"
-              >
-                Add API
-              </Button>
-            </Tooltip>
-            <Tooltip title="Run All test">
-              <Button
-                variant="contained"
-                color="secondary"
-                aria-label="Run All"
-              >
-                Run all
+          
+           <Tooltip title="Refresh display">
+              <Button variant="contained"  aria-label="Refresh"
+              className={classes.button}>
+                Refresh Now 
+                <CachedIcon className={classes.rightIcon} />
               </Button>
             </Tooltip>
           </div>

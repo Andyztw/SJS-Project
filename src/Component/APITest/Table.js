@@ -26,9 +26,9 @@ const row = (
 ) => {
   const currentlyEditing = editIdx === dataIndex;
   return (
-    <TableRow key={`tr-${dataIndex}`}>
+    <TableRow key={`tr-${dataIndex}`}hover>
       {header.map((y, k) => (
-        <TableCell key={`trc-${k}`}>
+        <TableCell key={`trc-${k}`} >
           {currentlyEditing ? (
             <TextField
               name={y.prop}
