@@ -13,9 +13,6 @@ const styles = theme => ({
     display: "flex",
     flexWrap: "wrap"
   },
-  button: {
-    margin: theme.spacing.unit
-  },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit
@@ -28,6 +25,10 @@ const styles = theme => ({
   },
   menu: {
     width: 200
+  },
+  button: {
+    margin: theme.spacing.unit,
+    width: 150
   }
 });
 
@@ -65,8 +66,6 @@ const methods = [
 
 class AddAPI extends Component {
   state = {
-    //initP: true,
-    //initB: true,
     method: "GET",
     protocol: "http://",
     host: "www.SJS.co.nz",
@@ -77,14 +76,24 @@ class AddAPI extends Component {
     headerList: [],
     hKey: "User-agent",
     hValue: "Mozilla",
-    // paraIdCount: 1,
-    // headerIdCount: 1,
     editIdx: -1,
     editIdxHeader : -1
   };
 
   constructor(props){
       super(props);
+  }
+
+  createAPI(){
+    let thisAPI = {method: "GET",
+    protocol: "http://",
+    host: "www.SJS.co.nz",
+    path: "src/api",
+    paraKey : "Key",
+    pValue: "Value",
+    paraList: [],
+    headerList: []};
+    return thisAPI;
   }
 
   handleParaRemove = i => {
@@ -169,10 +178,6 @@ class AddAPI extends Component {
       });
   };
 
-  handleAddAPI(){
-    console.log("inside handle api")
-  }
-
   // handleParaOnDelete = id =>{
   //   this.setState(({ paraList }) => ({
   //     paraList: paraList.filter(ex => ex.id !== id),
@@ -186,7 +191,7 @@ class AddAPI extends Component {
   // }
 
   render() {
-    const { classes } = this.props;
+    const { classes, handleAdd, handleCancel } = this.props;
     const {
       protocol,
       host,
@@ -201,24 +206,31 @@ class AddAPI extends Component {
     return (
       <div>
       <Grid container spacing={8}>
-        <Grid item xs={12} sm={10}>
+        <Grid item xs={12} sm={8}>
         <Typography variant="display1" gutterBottom>
           Adding A new API into the System
         </Typography>
         </Grid>
         <Grid item xs={12} sm={2}>
         <Button
+              className={classes.button}
               variant="contained"
               color="secondary"
-              className={classes.button}
-              onClick={() =>{this.handleAddAPI()
-                          }}
-            >
-              Add API Now
+              onClick={()=>handleAdd(this.createAPI())}>
+              Add API 
             </Button>
         
         </Grid>
-
+        
+        <Grid item xs={12} sm={2}>
+        <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={handleCancel} >
+              Cancel
+            </Button>
+            </Grid>
         
           <Grid item xs={12}>
             <Typography variant="title">Add API Path</Typography>
@@ -356,7 +368,6 @@ class AddAPI extends Component {
               color="primary"
               className={classes.button}
               onClick={() =>{this.createParaList()
-                              console.log(this.state.paraList)
                           }}
             >
               Add Parameter
@@ -395,8 +406,7 @@ class AddAPI extends Component {
               color="primary"
               className={classes.button}
               onClick={() =>{this.createHeaderList();
-                          console.log(this.state.headerList);}
-                        }
+                        }}
             >
               Add Header
             </Button>

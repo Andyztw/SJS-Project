@@ -22,7 +22,7 @@ class User extends Component {
   testPostRunAll() {
     console.log("In run all")
     let mybody = "token=" + localStorage.getItem('jwtToken')
-    axios.post(url + 'api/v1/apis/runall', mybody)
+    axios.post(url + 'api/v1/apis/run_all', mybody)
       .then(function (response) {
         console.log("in axios")
         console.log(response);

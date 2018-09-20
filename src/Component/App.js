@@ -22,9 +22,6 @@ import BarChartIcon from "@material-ui/icons/BarChart";
 import LayersIcon from "@material-ui/icons/Layers";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import TestTable from "./APITest/TestTable";
-import Conf from "./APITest/Conf";
-import UserCon from "./UserMan/UserCon";
-import Report from "./APITest/report";
 import LogIn from "./Dialogues/Login";
 import Footer from "./Layout/Footer";
 import AddAPI from "./APITest/AddAPI";
@@ -134,7 +131,8 @@ class Dashboard extends Component {
       path: "api/users/login",
       paraList: [{key: "username", value: "test" },{key: "password", value: "test" }],
       headerList: [{key: "Accept", value:"application/Json"},{key: "agent",value:"Mozilla"}, {key: "Content-Type", value:"application/Json"}],
-    }
+    },
+    APIData: []
   };
 
   constructor(props){
@@ -146,7 +144,7 @@ class Dashboard extends Component {
     }
   }
 
-  //handle the login infor
+  //handle the login action
   handleLogIn = obj => {
     console.log('inside handle login')
     if(obj.status){
@@ -183,16 +181,16 @@ class Dashboard extends Component {
   };
 
   //change the view to Report management when user click on the panel item
-  handleChangeReport = () => {
+  handleChangeEditAPI = () => {
     if (this.state.login) {
-      this.setState({ view: "REPORT", AppView: "Reports Management Console" });
+      this.setState({ view: "EDIT", AppView: "API Editing" });
     }
   };
 
   //change the view to API management when user click on the panel item
-  handleChangeConf = () => {
+  handleChangeAddAPI = () => {
     if (this.state.login) {
-      this.setState({ view: "CONF", AppView: "Configuration Console" });
+      this.setState({ view: "ADD", AppView: "Add New API" });
     }
   };
 
@@ -205,6 +203,37 @@ class Dashboard extends Component {
   handleDrawerClose = () => {
     this.setState({ open: false });
   };
+
+  handleAddAPIRequest = (new_API)=>{
+    console.log("In the adding api new api is:")
+    console.log(new_API)
+    this.handleCancel()
+  };
+
+  handleCancel = () =>{
+    this.handleChangeAPI();
+  }
+
+  handleEditAPIRequest(newAPI, index){
+    console.log("inside handling editing submit: ")
+    console.log(newAPI)
+    console.log(index)
+    this.handleCancel()
+  }
+
+  handleRefresh(){
+    console.log("handle refresh")
+  }
+
+  handleDelete(indices){
+    console.log("handle Delete")
+    console.log(indices)
+  }
+  
+  handleRun(indices){
+    console.log("handle Run")
+    console.log(indices)
+  }
 
   createView(v, classes) {
     //check if the user have login yet, if not only display the login screen
@@ -220,12 +249,17 @@ class Dashboard extends Component {
     }
     //If we did have login, let user select their needed views
     switch (v) {
-      case "API":
+      case "API": console.log(this.state)
         return (
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <div className={classes.tableContainer}>
-              <TestTable />
+              <TestTable handleAddAPI={this.handleChangeAddAPI}
+                        handleEdit={this.handleChangeEditAPI}
+                        handleRefresh={this.handleRefresh}
+                        handleDelete={this.handleDelete}
+                        handleRun={this.handleRun}
+                        APIData={this.state.APIData}/>
             </div>
           </main>
         );
@@ -240,25 +274,29 @@ class Dashboard extends Component {
           </main>
         );
         break;
-      case "REPORT":
+      case "EDIT":
         return (
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <div className={classes.tableContainer}>
             <EditAPI
               Editing={this.state.currentAPI}
+              handleEditAPI={(EditedAPI, index)=>{this.handleEditAPIRequest(EditedAPI, index)}}
+                      handleCancel={()=>this.handleCancel()}
               />
 
             </div>
           </main>
         );
         break;
-      case "CONF":
+      case "ADD":
         return (
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <div className={classes.tableContainer}>
-              <AddAPI />
+              <AddAPI handleAdd={this.handleAddAPIRequest}
+                      handleCancel={()=>this.handleCancel()}
+                      />
             </div>
           </main>
         );
@@ -285,14 +323,14 @@ class Dashboard extends Component {
             <ListItemText primary="Access Control" />
           </ListItem>
 
-          <ListItem button onClick={this.handleChangeReport}>
+          <ListItem button onClick={this.handleChangeEditAPI}>
             <ListItemIcon>
               <BarChartIcon />
             </ListItemIcon>
             <ListItemText primary="Edit Api testing" />
           </ListItem>
 
-          <ListItem button onClick={this.handleChangeConf}>
+          <ListItem button onClick={this.handleChangeAddAPI}>
             <ListItemIcon>
               <LayersIcon />
             </ListItemIcon>

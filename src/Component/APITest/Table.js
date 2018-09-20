@@ -2,14 +2,12 @@ import React from "react";
 import {
   Table,
   TableBody,
-  TableHead,
   TableRow,
   TableCell
 } from "@material-ui/core";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import DoneIcon from '@material-ui/icons/Done';
-import ClearIcon from '@material-ui/icons/Clear';
 import EditIcon from '@material-ui/icons/Edit';
 import TextField from "@material-ui/core/TextField";
 
@@ -22,7 +20,6 @@ const row = (
   editIdx,
   handleChange,
   stopEditing,
-  cancelEditing
 ) => {
   const currentlyEditing = editIdx === dataIndex;
   return (

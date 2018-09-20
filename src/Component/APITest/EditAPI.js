@@ -14,7 +14,8 @@ const styles = theme => ({
     flexWrap: "wrap"
   },
   button: {
-    margin: theme.spacing.unit
+    margin: theme.spacing.unit,
+    width: 150
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -177,6 +178,7 @@ class EditAPI extends Component {
   handleSaveAPI(){
     console.log("inside saving api")
   }
+
   // handleParaOnDelete = id =>{
   //   this.setState(({ paraList }) => ({
   //     paraList: paraList.filter(ex => ex.id !== id),
@@ -190,7 +192,7 @@ class EditAPI extends Component {
   // }
 
   render() {
-    const { classes } = this.props;
+    const { classes, handleEditApi, handleCancel } = this.props;
     const {
       protocol,
       host,
@@ -205,7 +207,7 @@ class EditAPI extends Component {
     return (
       <div>
         <Grid container spacing={8}>
-         <Grid item xs={12} sm={10}>
+         <Grid item xs={12} sm={8}>
          <Typography variant="display1" gutterBottom>
           Editing current API
           </Typography>
@@ -221,6 +223,16 @@ class EditAPI extends Component {
               Save Change 
             </Button>
         
+            </Grid>
+            <Grid item xs={12} sm={2}>
+        <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
             </Grid>
 
           <Grid item xs={12}>
@@ -360,7 +372,6 @@ class EditAPI extends Component {
               color="primary"
               className={classes.button}
               onClick={() =>{this.createParaList()
-                              console.log(this.state.paraList)
                           }}
             >
               Add Parameter
@@ -399,8 +410,7 @@ class EditAPI extends Component {
               color="primary"
               className={classes.button}
               onClick={() =>{this.createHeaderList();
-                          console.log(this.state.headerList);}
-                        }
+                        }}
             >
               Add Header
             </Button>

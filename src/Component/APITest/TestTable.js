@@ -6,98 +6,76 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import Button from "@material-ui/core/Button";
 import CachedIcon from '@material-ui/icons/Cached';
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import EditIcon from '@material-ui/icons/Edit'
+import AddIcon from '@material-ui/icons/Add'
+import ListDisplay from './ListDisplay'
 
-let counter = 0;
-function createData(name, API, lastRun, FPass, UpPer) {
-  counter += 1;
-  return { id: counter, name, API, lastRun, FPass, UpPer };
-}
-
-function getSorting(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => b[orderBy] - a[orderBy]
-    : (a, b) => a[orderBy] - b[orderBy];
-}
-
+//we set the column header and other settings here
 const rows = [
   {
-    id: "name",
-    numeric: false,
+    id: "id",
+    numeric: true,
     disablePadding: true,
-    label: "Test Name"
+    label: "ID"
   },
-  { id: "APIName", numeric: false, disablePadding: false, label: "API Tested" },
-  { id: "LastRun", numeric: true, disablePadding: false, label: "Last Run" },
-  { id: "FailPass", numeric: true, disablePadding: false, label: "Pass/Fail" },
-  { id: "UpTime", numeric: true, disablePadding: false, label: "Up Time %" }
+  { id: "testRes ", numeric: false,  disablePadding: false, label: " Test Result" },
+  { id: "time", numeric: false,  disablePadding: false, label: "Last Run on "},
+  { id: "method", numeric: false, disablePadding: false, label: "Method" },
+  { id: "protocol", numeric: false, disablePadding: false, label: "Protocol" },
+  { id: "host", numeric: false, disablePadding: false, label: "Host path" },
+  { id: "path", numeric: false, disablePadding: false, label: "API path" },
+  { id: "params", numeric: false,  disablePadding: false, label: "Parameters" },
+  { id: "headers", numeric: false,  disablePadding: false, label: "Headers" }
 ];
 
-class EnhancedTableHead extends Component {
-    state = {
-      data: [],
-      isLoading: true
-    };
-
-    // componentWillMount() { 
-    //   this.testDash();
-    // } 
+//a custmized header row for the table
+class TestTableHead extends Component {
+  //   // componentWillMount() { 
+  //   //   this.testDash();
+  //   // } 
   
-    testDash(){
-    let currentCom = this;  
-    let url = "https://www.nzbeta.com/";
-    let myDash = {};
-    console.log(JSON.stringify({"token": localStorage.getItem('jwtToken')}))  
-     fetch(url+'api/v1/dashboard', {
-       method: 'POST',
-       headers: {
-               //"Content-Type": "application/json; charset=utf-8",
-                "Content-Type": "application/x-www-form-urlencoded",
-                //"Accept" : 'application/json',
-                //'Content-Type': 'application/json'
-           },
-      //body: JSON.stringify({"token": localStorage.getItem('jwtToken')}),
-      body: "token="+localStorage.getItem('jwtToken'),
-    }).then(function(response) {
-      return response.json();
-    }).then(function(data) {
-      console.log("in testDash setting states")
-        console.log(data.data)
-        myDash = data.data;
-        currentCom.setState({data: myDash, isLoading : false})
-        console.log("after setting state")
-        console.log(currentCom.state)
-        console.log(new Date(1537138807723).toLocaleString())
-    });
-  }    
-
-  
-  createSortHandler = property => event => {
-    this.props.onRequestSort(event, property);
-  };
-
-
+  //   testDash(){
+  //   let currentCom = this;  
+  //   let url = "https://www.nzbeta.com/";
+  //   let myDash = {};
+  //   console.log(JSON.stringify({"token": localStorage.getItem('jwtToken')}))  
+  //    fetch(url+'api/v1/dashboard', {
+  //      method: 'POST',
+  //      headers: {
+  //              //"Content-Type": "application/json; charset=utf-8",
+  //               "Content-Type": "application/x-www-form-urlencoded",
+  //               //"Accept" : 'application/json',
+  //               //'Content-Type': 'application/json'
+  //          },
+  //     //body: JSON.stringify({"token": localStorage.getItem('jwtToken')}),
+  //     body: "token="+localStorage.getItem('jwtToken'),
+  //   }).then(function(response) {
+  //     return response.json();
+  //   }).then(function(data) {
+  //     console.log("in testDash setting states")
+  //       console.log(data.data)
+  //       myDash = data.data;
+  //       currentCom.setState({data: myDash, isLoading : false})
+  //       console.log("after setting state")
+  //       console.log(currentCom.state)
+  //       console.log(new Date(1537138807723).toLocaleString())
+  //   });
+  // }    
 
   render() {
     const {
       onSelectAllClick,
-      order,
-      orderBy,
       numSelected,
       rowCount
     } = this.props;
@@ -105,11 +83,13 @@ class EnhancedTableHead extends Component {
     return (
       <TableHead>
         <TableRow>
-          <TableCell padding="checkbox">
+          <TableCell padding="checkbox" 
+           style={{'background': 'black', 'color': 'white'}}>
             <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={numSelected === rowCount}
               onChange={onSelectAllClick}
+              style={{'background': 'black', 'color': 'white'}}
             />
           </TableCell>
           {rows.map(row => {
@@ -118,21 +98,10 @@ class EnhancedTableHead extends Component {
                 key={row.id}
                 numeric={row.numeric}
                 padding={row.disablePadding ? "none" : "default"}
-                sortDirection={orderBy === row.id ? order : false}
+                style={{'background': 'black', 'color': 'white'}}
               >
-                <Tooltip
-                  title="Report of test"
-                  placement={row.numeric ? "bottom-end" : "bottom-start"}
-                  enterDelay={300}
-                >
-                  <TableSortLabel
-                    active={orderBy === row.id}
-                    direction={order}
-                    onClick={this.createSortHandler(row.id)}
-                  >
-                    {row.label}
-                  </TableSortLabel>
-                </Tooltip>
+                {row.label}
+
               </TableCell>
             );
           }, this)}
@@ -142,15 +111,13 @@ class EnhancedTableHead extends Component {
   }
 }
 
-EnhancedTableHead.propTypes = {
+TestTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.string.isRequired,
-  orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired
 };
 
+//create the main button tool bar
 const toolbarStyles = theme => ({
   root: {
     paddingRight: theme.spacing.unit
@@ -176,7 +143,7 @@ const toolbarStyles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
-    width: 200
+    width: 180
   },
   rightIcon: {
     marginLeft: theme.spacing.unit,
@@ -186,8 +153,9 @@ const toolbarStyles = theme => ({
   },
 });
 
-let EnhancedTableToolbar = props => {
-  const { numSelected, classes } = props;
+let TestTableToolbar = props => {
+  const { numSelected, classes, AddAPI, Edit, 
+          Refresh, Delete, Run} = props;
 
   return (
     <Toolbar
@@ -196,13 +164,24 @@ let EnhancedTableToolbar = props => {
       })}
     >
       <div className={classes.actions}>
+      
         {numSelected > 0 ? (
           <div className="AppBarButtons">
           <Tooltip title="Refresh display">
               <Button variant="contained" aria-label="Refresh"
-              className={classes.button}>
+              className={classes.button}
+              onClick={Refresh}>
                 Refresh Now 
                 <CachedIcon className={classes.rightIcon} />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Add new API">
+              <Button variant="contained" aria-label="AddAPI"
+              className={classes.button}
+              color="primary"
+              onClick={AddAPI}>
+                Add New API
+                <AddIcon className={classes.rightIcon} />
               </Button>
             </Tooltip>
             <Tooltip title="Run Selected Test">
@@ -211,6 +190,7 @@ let EnhancedTableToolbar = props => {
                 color="primary"
                 aria-label="Selected Run"
                 className={classes.button}
+                onClick={Run}
               >
                 Run {" "+numSelected+ " API"}
                 <PlayArrowIcon className={classes.rightIcon} />
@@ -222,6 +202,7 @@ let EnhancedTableToolbar = props => {
                 variant="contained"
                 color="primary"
                 aria-label="Edit"
+                onClick={Edit}
                 className={classes.button}
               >
                 Edit API
@@ -230,7 +211,8 @@ let EnhancedTableToolbar = props => {
             </Tooltip>): null}
             <Tooltip title="Delete selected test">
               <Button variant="contained" color="secondary" aria-label="Delete"
-              className={classes.button}>
+              className={classes.button}
+              onClick={Delete}>
                 Delete {" "+numSelected+ " API"}
                 <DeleteIcon className={classes.rightIcon} />
               </Button>
@@ -242,9 +224,20 @@ let EnhancedTableToolbar = props => {
           
            <Tooltip title="Refresh display">
               <Button variant="contained"  aria-label="Refresh"
-              className={classes.button}>
+              className={classes.button}
+              onClick={Refresh}>
                 Refresh Now 
-                <CachedIcon className={classes.rightIcon} />
+                <CachedIcon className={classes.rightIcon} 
+                />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Add new API">
+              <Button variant="contained" aria-label="AddAPI"
+              className={classes.button}
+              color="primary"
+              onClick={AddAPI}>
+                Add New API
+                <AddIcon className={classes.rightIcon} />
               </Button>
             </Tooltip>
           </div>
@@ -254,12 +247,12 @@ let EnhancedTableToolbar = props => {
   );
 };
 
-EnhancedTableToolbar.propTypes = {
+TestTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired
 };
 
-EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
+TestTableToolbar = withStyles(toolbarStyles)(TestTableToolbar);
 
 const styles = theme => ({
   root: {
@@ -274,34 +267,16 @@ const styles = theme => ({
   }
 });
 
-class EnhancedTable extends React.Component {
+class TestTable extends Component {
   state = {
-    order: "asc",
-    orderBy: "name",
     selected: [],
-    data: [
-      createData("Test Login", "Login.js", 60, 1, 95.8),
-      createData("Test Registeration", "Register.js", 25.0, 1, 99.9),
-      createData("Get user name", "retrieve_user", 16.0, 0, 96.0),
-      createData("Get user info", "retrieve_info", 6.0, 0, 94.3),
-      createData("Post new user info", "post_new_user", 1, 49, 89.9),
-      createData("search by pay", "Search?byPay", 3.2, 1, 96.6),
-      createData("Search by industry", "Search?byIndustry", 9.0, 1, 99),
-      createData("Search Employer", "Search?byEmployer", 0.0, 1, 100)
-    ],
-    page: 0,
-    rowsPerPage: 7
-  };
-
-  handleRequestSort = (event, property) => {
-    const orderBy = property;
-    let order = "desc";
-
-    if (this.state.orderBy === property && this.state.order === "desc") {
-      order = "asc";
-    }
-
-    this.setState({ order, orderBy });
+    data: [{id: 1, testRes: "PASS", time: new Date(1537138807723).toLocaleString(),
+              method: "POST", protocol: "https://",
+              host: "www.betanz.com/", 
+              path: "api/users/login",
+              paraList: [{key: "username", value: "test" },{key: "password", value: "test" }],
+              headerList: [{key: "Accept", value:"application/Json"},{key: "agent",value:"Mozilla"}, {key: "Content-Type", value:"application/Json"}],
+            }]
   };
 
   handleSelectAllClick = (event, checked) => {
@@ -333,40 +308,32 @@ class EnhancedTable extends React.Component {
     this.setState({ selected: newSelected });
   };
 
-  handleChangePage = (event, page) => {
-    this.setState({ page });
-  };
-
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
-
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
-    const { classes } = this.props;
-    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
-    const emptyRows =
-      rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-
+    const { classes, handleAddAPI, handleEdit, 
+      handleRefresh, handleDelete, handleRun, APIData } = this.props;
+    const { data, selected} = this.state;
+      console.log("inside test table render")
+      console.log(this.props)  
     return (
       <Paper className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <TestTableToolbar numSelected={selected.length}
+                          AddAPI={handleAddAPI}
+                          Edit={handleEdit} 
+                          Refresh={handleRefresh}
+                          Delete={handleDelete} 
+                          Run={handleRun}/>
+
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
-            <EnhancedTableHead
+            <TestTableHead
               numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
               onSelectAllClick={this.handleSelectAllClick}
-              onRequestSort={this.handleRequestSort}
               rowCount={data.length}
             />
             <TableBody>
-              {data
-                .sort(getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
+              {data.map(n => {
                   const isSelected = this.isSelected(n.id);
                   return (
                     <TableRow
@@ -381,45 +348,34 @@ class EnhancedTable extends React.Component {
                       <TableCell padding="checkbox">
                         <Checkbox checked={isSelected} />
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.name}
+                      <TableCell numeric component="th" scope="row" padding="none">
+                        {n.id}
                       </TableCell>
-                      <TableCell>{n.API}</TableCell>
-                      <TableCell numeric>{n.lastRun}</TableCell>
-                      <TableCell numeric>{n.FPass}</TableCell>
-                      <TableCell numeric>{n.UpPer}</TableCell>
+                      <TableCell>{n.testRes}</TableCell>
+                      <TableCell >{n.time}</TableCell>
+                      <TableCell >{n.method}</TableCell>
+                      <TableCell >{n.protocol}</TableCell>
+                      <TableCell >{n.host}</TableCell>
+                      <TableCell >{n.path}</TableCell>
+                      <TableCell ><ListDisplay name={"Parameters"} 
+                                    data={n.paraList}></ListDisplay>
+                      </TableCell>
+                      <TableCell ><ListDisplay name={"Headers"} 
+                                    data={n.headerList}></ListDisplay>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </div>
-        <TablePagination
-          component="div"
-          count={data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            "aria-label": "Previous Page"
-          }}
-          nextIconButtonProps={{
-            "aria-label": "Next Page"
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
       </Paper>
     );
   }
 }
 
-EnhancedTable.propTypes = {
+TestTable.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(EnhancedTable);
+export default withStyles(styles)(TestTable);
