@@ -132,7 +132,6 @@ class Dashboard extends Component {
       paraList: [{key: "username", value: "test" },{key: "password", value: "test" }],
       headerList: [{key: "Accept", value:"application/Json"},{key: "agent",value:"Mozilla"}, {key: "Content-Type", value:"application/Json"}],
     },
-    APIData: []
   };
 
   constructor(props){
@@ -221,10 +220,6 @@ class Dashboard extends Component {
     this.handleCancel()
   }
 
-  handleRefresh(){
-    console.log("handle refresh")
-  }
-
   handleDelete(indices){
     console.log("handle Delete")
     console.log(indices)
@@ -249,17 +244,16 @@ class Dashboard extends Component {
     }
     //If we did have login, let user select their needed views
     switch (v) {
-      case "API": console.log(this.state)
+      case "API": 
         return (
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <div className={classes.tableContainer}>
               <TestTable handleAddAPI={this.handleChangeAddAPI}
                         handleEdit={this.handleChangeEditAPI}
-                        handleRefresh={this.handleRefresh}
                         handleDelete={this.handleDelete}
                         handleRun={this.handleRun}
-                        APIData={this.state.APIData}/>
+                        />
             </div>
           </main>
         );

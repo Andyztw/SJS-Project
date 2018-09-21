@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import axios from 'axios';
 
-const url = "https://www.nzbeta.com/";
+const url = "https://www.nzbeta.com/"
 
 class User extends Component {
 

@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, Fragment} from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -20,6 +20,7 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import EditIcon from '@material-ui/icons/Edit'
 import AddIcon from '@material-ui/icons/Add'
 import ListDisplay from './ListDisplay'
+import axios from 'axios'
 
 //we set the column header and other settings here
 const rows = [
@@ -32,47 +33,12 @@ const rows = [
   { id: "testRes ", numeric: false,  disablePadding: false, label: " Test Result" },
   { id: "time", numeric: false,  disablePadding: false, label: "Last Run on "},
   { id: "method", numeric: false, disablePadding: false, label: "Method" },
-  { id: "protocol", numeric: false, disablePadding: false, label: "Protocol" },
-  { id: "host", numeric: false, disablePadding: false, label: "Host path" },
-  { id: "path", numeric: false, disablePadding: false, label: "API path" },
-  { id: "params", numeric: false,  disablePadding: false, label: "Parameters" },
-  { id: "headers", numeric: false,  disablePadding: false, label: "Headers" }
+  { id: "url", numeric: false, disablePadding: false, label: "Full URL of API" },
 ];
 
 //a custmized header row for the table
 class TestTableHead extends Component {
-  //   // componentWillMount() { 
-  //   //   this.testDash();
-  //   // } 
-  
-  //   testDash(){
-  //   let currentCom = this;  
-  //   let url = "https://www.nzbeta.com/";
-  //   let myDash = {};
-  //   console.log(JSON.stringify({"token": localStorage.getItem('jwtToken')}))  
-  //    fetch(url+'api/v1/dashboard', {
-  //      method: 'POST',
-  //      headers: {
-  //              //"Content-Type": "application/json; charset=utf-8",
-  //               "Content-Type": "application/x-www-form-urlencoded",
-  //               //"Accept" : 'application/json',
-  //               //'Content-Type': 'application/json'
-  //          },
-  //     //body: JSON.stringify({"token": localStorage.getItem('jwtToken')}),
-  //     body: "token="+localStorage.getItem('jwtToken'),
-  //   }).then(function(response) {
-  //     return response.json();
-  //   }).then(function(data) {
-  //     console.log("in testDash setting states")
-  //       console.log(data.data)
-  //       myDash = data.data;
-  //       currentCom.setState({data: myDash, isLoading : false})
-  //       console.log("after setting state")
-  //       console.log(currentCom.state)
-  //       console.log(new Date(1537138807723).toLocaleString())
-  //   });
-  // }    
-
+ 
   render() {
     const {
       onSelectAllClick,
@@ -268,20 +234,52 @@ const styles = theme => ({
 });
 
 class TestTable extends Component {
-  state = {
-    selected: [],
-    data: [{id: 1, testRes: "PASS", time: new Date(1537138807723).toLocaleString(),
-              method: "POST", protocol: "https://",
-              host: "www.betanz.com/", 
-              path: "api/users/login",
-              paraList: [{key: "username", value: "test" },{key: "password", value: "test" }],
-              headerList: [{key: "Accept", value:"application/Json"},{key: "agent",value:"Mozilla"}, {key: "Content-Type", value:"application/Json"}],
-            }]
-  };
+ 
 
+  constructor(props){
+    super(props)
+    this.state = {
+          selected: [],
+          data: [],
+          isLoading: true,
+          error: null,
+          errMsg: "Loading data, please wait..."
+    };
+
+    this.fetchDashData = this.fetchDashData.bind(this);
+  }
+  
+  //the codes for loading data form back end as follows 
+  componentDidMount() {
+    if(localStorage.getItem('jwtToken')){
+      this.fetchDashData()
+    }
+    else this.setState({errMsg: "Missing Token", error: "missing token"});
+  }
+
+  fetchDashData(){
+    let testTable = this;
+    this.setState({ isLoading: true, errMsg: "Loading data, please wait...", error: null });
+    let url = "https://www.nzbeta.com/"
+    let path = 'api/v1/dashboard'
+
+    let bod = { "token": localStorage.getItem('jwtToken') };
+
+    axios.post(url + path , bod)
+      .then(function (response) {
+        console.log("in axios testsdash")
+        console.log(response.data.data)
+        testTable.setState({ data: response.data.data
+          , isLoading: false })
+      })
+      .catch(function (error) {
+        testTable.setState({ error, isLoading: false, errMsg: "Failed to load data" })
+      });
+  }
+ 
   handleSelectAllClick = (event, checked) => {
     if (checked) {
-      this.setState(state => ({ selected: state.data.map(n => n.id) }));
+      this.setState(state => ({ selected: state.data.map(n => n.path_id) }));
       return;
     }
     this.setState({ selected: [] });
@@ -304,7 +302,7 @@ class TestTable extends Component {
         selected.slice(selectedIndex + 1)
       );
     }
-
+    console.log(newSelected)
     this.setState({ selected: newSelected });
   };
 
@@ -312,16 +310,17 @@ class TestTable extends Component {
 
   render() {
     const { classes, handleAddAPI, handleEdit, 
-      handleRefresh, handleDelete, handleRun, APIData } = this.props;
-    const { data, selected} = this.state;
-      console.log("inside test table render")
-      console.log(this.props)  
+      handleDelete, handleRun} = this.props;
+    
+    const { data, selected, isLoading, error, errMsg} = this.state;
+    
     return (
       <Paper className={classes.root}>
-        <TestTableToolbar numSelected={selected.length}
+        {isLoading || error ? <h1> {errMsg} </h1>
+        :<Fragment> <TestTableToolbar numSelected={selected.length}
                           AddAPI={handleAddAPI}
                           Edit={handleEdit} 
-                          Refresh={handleRefresh}
+                          Refresh={this.fetchDashData}
                           Delete={handleDelete} 
                           Run={handleRun}/>
 
@@ -333,42 +332,37 @@ class TestTable extends Component {
               rowCount={data.length}
             />
             <TableBody>
-              {data.map(n => {
-                  const isSelected = this.isSelected(n.id);
+              {data.map(dataItem => {
+                  const isSelected = this.isSelected(dataItem.path_id);
+                  var lastRun = new Date(parseInt(dataItem.timestamp))
                   return (
                     <TableRow
                       hover
-                      onClick={event => this.handleClick(event, n.id)}
+                      onClick={event => this.handleClick(event, dataItem.path_id)}
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
-                      key={n.id}
+                      key={+dataItem.path_id}
                       selected={isSelected}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell numeric component="th" scope="row" padding="none">
-                        {n.id}
+                        {+dataItem.path_id}
                       </TableCell>
-                      <TableCell>{n.testRes}</TableCell>
-                      <TableCell >{n.time}</TableCell>
-                      <TableCell >{n.method}</TableCell>
-                      <TableCell >{n.protocol}</TableCell>
-                      <TableCell >{n.host}</TableCell>
-                      <TableCell >{n.path}</TableCell>
-                      <TableCell ><ListDisplay name={"Parameters"} 
-                                    data={n.paraList}></ListDisplay>
-                      </TableCell>
-                      <TableCell ><ListDisplay name={"Headers"} 
-                                    data={n.headerList}></ListDisplay>
-                      </TableCell>
+                      <TableCell>{dataItem.passed > 0 ? "Pass": "Fail"}</TableCell>
+                      <TableCell >{lastRun.toLocaleString()}</TableCell>
+                      <TableCell >{dataItem.method}</TableCell>
+                      <TableCell >{dataItem.protocol+"//"+dataItem.domain+"/"+dataItem.path}</TableCell>
                     </TableRow>
                   );
                 })}
             </TableBody>
           </Table>
         </div>
+        </Fragment>
+        }
       </Paper>
     );
   }

@@ -10,7 +10,7 @@ import LockIcon from "@material-ui/icons/LockOutlined";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
-
+import TextField from "@material-ui/core/TextField"
 
 const styles = theme => ({
   layout: {
@@ -54,7 +54,9 @@ class LogIn extends Component {
     userName: "",
     Pword: "",
     privi: "Admin",
-    valid: false
+    valid: false,
+    errorMsg: "",
+    showErr: false
   };
 
   constructor(props) {
@@ -62,6 +64,7 @@ class LogIn extends Component {
     this.FetchUserData = this.FetchUserData.bind(this);
   }
 
+  
   FetchUserData(){
     let url = "https://www.nzbeta.com/";
     let currentComponent = this;
@@ -114,14 +117,14 @@ class LogIn extends Component {
 
   handleSubmit = () => {
     if(this.checkInputNotEmpty()){
-        if(localStorage.getItem('jwtToken') == null)
-        console.log('start to fetch data')
+        if(localStorage.getItem('jwtToken') === null){
         this.FetchUserData();
         this.props.onSubmit({ name: this.state.userName, pri: this.state.privi, status : this.state.valid });
       }
+    }
 
     else{
-      console.log("Make sure you entered user name and password")
+      this.setState({errorMsg: "Make sure user name or password are not empty", showErr: true})
     }
 
   };
@@ -141,7 +144,20 @@ class LogIn extends Component {
             </Avatar>
 
             <Typography variant="headline">Login</Typography>
-
+            {this.state.showErr? <TextField
+          id="ErrorLog"
+          multiline
+          fullWidth
+          rowsMax="4"
+          style={{"background" : "red"}}
+          value={this.state.errorMsg}
+          InputProps={{
+            readOnly: true,
+          }}
+          className={classes.textField}
+          margin="normal"
+          variant="filled"
+           /> : null}
             <form className={classes.form}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel>User name</InputLabel>
