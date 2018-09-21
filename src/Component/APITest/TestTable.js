@@ -233,9 +233,10 @@ const styles = theme => ({
   }
 });
 
+const url = "https://www.nzbeta.com/" //name of our server 
+
 class TestTable extends Component {
  
-
   constructor(props){
     super(props)
     this.state = {
@@ -247,6 +248,8 @@ class TestTable extends Component {
     };
 
     this.fetchDashData = this.fetchDashData.bind(this);
+    this.postDeleteAPI = this.postDeleteAPI.bind(this);
+    this.postRunAPI = this.postRunAPI.bind(this);
   }
   
   //the codes for loading data form back end as follows 
@@ -257,10 +260,10 @@ class TestTable extends Component {
     else this.setState({errMsg: "Missing Token", error: "missing token"});
   }
 
+  //for getting api dash board data
   fetchDashData(){
     let testTable = this;
     this.setState({ isLoading: true, errMsg: "Loading data, please wait...", error: null });
-    let url = "https://www.nzbeta.com/"
     let path = 'api/v1/dashboard'
 
     let bod = { "token": localStorage.getItem('jwtToken') };
@@ -276,7 +279,44 @@ class TestTable extends Component {
         testTable.setState({ error, isLoading: false, errMsg: "Failed to load data" })
       });
   }
- 
+  
+  //for sending the deleted to backend
+  postDeleteAPI(){
+    let testTable = this
+    let path = "api/v1/apis/invert_lock"
+    let bod = { "token": localStorage.getItem('jwtToken'), "selected_ids": testTable.state.selected };
+    console.log(bod)
+    axios.post(url + path , bod)
+      .then(function (response) {
+        console.log("in axios postDelete")
+        console.log(response)
+        
+      })
+      .catch(function (error) {
+        testTable.setState({ error, isLoading: false, errMsg: "Failed to Post delete data" })
+      });
+      this.fetchDashData();  
+
+  } 
+  
+  //sending the run now api to backend
+  postRunAPI(){
+    let testTable = this
+    let path = "api/v1/apis/run_selected"
+    let bod = { "token": localStorage.getItem('jwtToken'), "selected_ids": testTable.state.selected };
+    console.log(bod)
+    axios.post(url + path , bod)
+      .then(function (response) {
+        console.log("in axios postRun")
+        console.log(response)
+        
+      })
+      .catch(function (error) {
+        testTable.setState({ error, isLoading: false, errMsg: "Failed to Post run data" })
+      });
+      this.fetchDashData();
+  } 
+
   handleSelectAllClick = (event, checked) => {
     if (checked) {
       this.setState(state => ({ selected: state.data.map(n => n.path_id) }));
@@ -310,7 +350,7 @@ class TestTable extends Component {
 
   render() {
     const { classes, handleAddAPI, handleEdit, 
-      handleDelete, handleRun} = this.props;
+     } = this.props;
     
     const { data, selected, isLoading, error, errMsg} = this.state;
     
@@ -321,8 +361,8 @@ class TestTable extends Component {
                           AddAPI={handleAddAPI}
                           Edit={handleEdit} 
                           Refresh={this.fetchDashData}
-                          Delete={handleDelete} 
-                          Run={handleRun}/>
+                          Delete={this.postDeleteAPI} 
+                          Run={this.postRunAPI}/>
 
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
