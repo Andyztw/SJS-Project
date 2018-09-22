@@ -8,6 +8,7 @@ import Button from "@material-ui/core/Button";
 import Paper from '@material-ui/core/Paper';
 import Table from './Table';
 import axios from 'axios';
+import ResponsePanel from './ResponsePanel'
 
 const url = "https://www.nzbeta.com/"
 
@@ -489,7 +490,10 @@ class AddAPI extends Component {
          }
        ]}
      />
-              </Paper>
+          </Paper>
+          </Grid>
+          <Grid item xs={12} sm={12}>
+          <ResponsePanel />
           </Grid>
         </Grid>
       </div>

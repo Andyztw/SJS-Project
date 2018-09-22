@@ -19,7 +19,8 @@ import CachedIcon from '@material-ui/icons/Cached';
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import EditIcon from '@material-ui/icons/Edit'
 import AddIcon from '@material-ui/icons/Add'
-import ListDisplay from './ListDisplay'
+import ResponsePanel from './ResponsePanel'
+
 import axios from 'axios'
 
 //we set the column header and other settings here
@@ -223,13 +224,15 @@ TestTableToolbar = withStyles(toolbarStyles)(TestTableToolbar);
 const styles = theme => ({
   root: {
     width: "100%",
-    marginTop: theme.spacing.unit * 3
+    marginTop: theme.spacing.unit * 0.1,
+    overflowX: "auto"
   },
   table: {
     minWidth: 1020
   },
   tableWrapper: {
-    overflowX: "auto"
+    overflowX: "auto",
+     height: '500px' 
   }
 });
 
@@ -393,8 +396,8 @@ class TestTable extends Component {
                           Refresh={this.fetchDashData}
                          />
 
-        <div className={classes.tableWrapper}>
-          <Table className={classes.table} aria-labelledby="tableTitle">
+        <div className={classes.tableWrapper} >
+          <Table className={classes.table} aria-labelledby="tableTitle" wrapperStyle={{ maxHeight: 500 }}>
             <TestTableHead
               numSelected={selected.length}
               onSelectAllClick={this.handleSelectAllClick}
@@ -432,6 +435,7 @@ class TestTable extends Component {
         </div>
         </Fragment>
         }
+        <ResponsePanel type={"Simple"}/>    
       </Paper>
     );
   }
