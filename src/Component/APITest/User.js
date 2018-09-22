@@ -9,12 +9,12 @@ class User extends Component {
     super(props);
 
     //if(!localStorage.getItem('jwtToken')){
-    this.loadData();
+   // this.loadData();
     //console.log("load data function called")
     //}
-    this.testDash();
-    this.testPostRunAll();
-    this.testPostAddAPI()
+    //this.testDash();
+    //this.testPostRunAll();
+    //this.testPostAddAPI()
   }
 
 

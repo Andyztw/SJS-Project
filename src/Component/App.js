@@ -180,9 +180,9 @@ class Dashboard extends Component {
   };
 
   //change the view to Report management when user click on the panel item
-  handleChangeEditAPI = () => {
+  handleChangeEditAPI = (API) => {
     if (this.state.login) {
-      this.setState({ view: "EDIT", AppView: "API Editing" });
+      this.setState({ view: "EDIT", AppView: "API Editing", currentAPI: API });
     }
   };
 
@@ -213,21 +213,10 @@ class Dashboard extends Component {
     this.handleChangeAPI();
   }
 
-  handleEditAPIRequest(newAPI, index){
+  handleEditAPIRequest(newAPI){
     console.log("inside handling editing submit: ")
     console.log(newAPI)
-    console.log(index)
     this.handleCancel()
-  }
-
-  handleDelete(indices){
-    console.log("handle Delete")
-    console.log(indices)
-  }
-  
-  handleRun(indices){
-    console.log("handle Run")
-    console.log(indices)
   }
 
   createView(v, classes) {
@@ -250,9 +239,7 @@ class Dashboard extends Component {
             <div className={classes.appBarSpacer} />
             <div className={classes.tableContainer}>
               <TestTable handleAddAPI={this.handleChangeAddAPI}
-                        handleEdit={this.handleChangeEditAPI}
-                        handleDelete={this.handleDelete}
-                        handleRun={this.handleRun}
+                        handleEdit={(API)=>this.handleChangeEditAPI(API)}
                         />
             </div>
           </main>
@@ -275,7 +262,7 @@ class Dashboard extends Component {
             <div className={classes.tableContainer}>
             <EditAPI
               Editing={this.state.currentAPI}
-              handleEditAPI={(EditedAPI, index)=>{this.handleEditAPIRequest(EditedAPI, index)}}
+              handleEditAPI={()=>{this.handleEditAPIRequest()}}
                       handleCancel={()=>this.handleCancel()}
               />
 

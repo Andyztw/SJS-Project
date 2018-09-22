@@ -7,6 +7,9 @@ import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Paper from '@material-ui/core/Paper';
 import Table from './Table';
+import axios from 'axios';
+
+const url = "https://www.nzbeta.com/"
 
 const styles = theme => ({
   container: {
@@ -84,16 +87,46 @@ class AddAPI extends Component {
       super(props);
   }
 
+  postToAddAPI(){
+    let bod = this.createAPI();
+    axios.post(url + 'api/v1/apis/add_api', bod)
+      .then(function (response) {
+        console.log("in axios")
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  //creates the body for the post to add api backend
   createAPI(){
-    let thisAPI = {method: "GET",
-    protocol: "http://",
-    host: "www.SJS.co.nz",
-    path: "src/api",
-    paraKey : "Key",
-    pValue: "Value",
-    paraList: [],
-    headerList: []};
+    let thisAPI = {"method": this.state.method,
+    "protocol": this.state.protocol,
+    "domain": this.state.host,
+    "path": this.state.path,
+    "requests": {"header": this.createRequestFromList(this.state.headerList), 
+                  "params": this.createRequestFromList(this.state.paraList)},
+    "responses":{"status_code":200}
+    };
+    
     return thisAPI;
+  }
+
+  //reformat the list of params and headers into api acceptable format
+  createRequestFromList(list){
+    let request = "{";
+
+    list.map((Item, index, list) => {
+      var myPairs = "\""+Item.key+ "\" : \""+Item.value+ "\""; 
+      request += myPairs;
+      if(index < list.length-1)
+      request +=", ";
+    })
+
+    request +="}";
+    console.log(request)
+    return JSON.parse(request) 
   }
 
   handleParaRemove = i => {
@@ -216,7 +249,7 @@ class AddAPI extends Component {
               className={classes.button}
               variant="contained"
               color="secondary"
-              onClick={()=>handleAdd(this.createAPI())}>
+              onClick={()=> this.postToAddAPI()}>
               Add API 
             </Button>
         

@@ -290,15 +290,28 @@ class TestTable extends Component {
       .then(function (response) {
         console.log("in axios postDelete")
         console.log(response)
-        
+        if(response.data.data.message === "OK"){
+          this.doRemoveDelete();  
+        } 
       })
       .catch(function (error) {
         testTable.setState({ error, isLoading: false, errMsg: "Failed to Post delete data" })
       });
-      this.fetchDashData();  
-
+     
   } 
   
+  //remove the deleted api from the 
+  doRemoveDelete(){
+    let newTable = [];
+    newTable = this.state.data;
+
+    this.state.selected.map((item) =>{
+      newTable = newTable.filter((fItem) => fItem.path_id !==item.path_id)
+    })
+    console.log("in removedelete")
+    this.setState({data: newTable, selected: []});
+  }
+
   //sending the run now api to backend
   postRunAPI(){
     let testTable = this
@@ -314,8 +327,11 @@ class TestTable extends Component {
       .catch(function (error) {
         testTable.setState({ error, isLoading: false, errMsg: "Failed to Post run data" })
       });
-      this.fetchDashData();
   } 
+
+  doUpdateRun(){
+
+  }
 
   handleSelectAllClick = (event, checked) => {
     if (checked) {
@@ -346,6 +362,20 @@ class TestTable extends Component {
     this.setState({ selected: newSelected });
   };
 
+  //grabbing the selected api object to pass to edit  
+  getSelectedAPIObj(){
+
+    let myAPI = {};
+    let id = this.state.selected[0];
+    if(this.state.selected.length > 0 ){
+      console.log(id)
+      myAPI = this.state.data.find((item) => {if(item.path_id === id){                                                   
+        return item;
+        }});
+      }
+      return myAPI;
+    }
+
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
@@ -359,10 +389,9 @@ class TestTable extends Component {
         {isLoading || error ? <h1> {errMsg} </h1>
         :<Fragment> <TestTableToolbar numSelected={selected.length}
                           AddAPI={handleAddAPI}
-                          Edit={handleEdit} 
+                          Edit={() => handleEdit(this.getSelectedAPIObj())} 
                           Refresh={this.fetchDashData}
-                          Delete={this.postDeleteAPI} 
-                          Run={this.postRunAPI}/>
+                         />
 
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">

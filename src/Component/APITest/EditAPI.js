@@ -7,6 +7,9 @@ import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Paper from '@material-ui/core/Paper';
 import Table from './Table';
+import axios from 'axios';
+
+const url = "https://www.nzbeta.com/"
 
 const styles = theme => ({
   container: {
@@ -79,19 +82,104 @@ class EditAPI extends Component {
 
   initState(){
     const {Editing} = this.props;
+    
+    let user_req = JSON.parse(Editing.user_req)
+    console.log(typeof user_req.header)
+    console.log(typeof user_req.params)
+
     this.state = {
+      path_id: Editing.path_id,
       method: Editing.method,
       protocol: Editing.protocol,
-      host: Editing.host,
+      host: Editing.domain,
       path: Editing.path,
       paraKey: "key",
       pValue: "Value",
-      paraList: Editing.paraList,
-      headerList: Editing.headerList,
+      paraList: (user_req.params === undefined? []:this.createArrayList(user_req.params)),
+      headerList: (user_req.header === undefined? []:this.createArrayList(user_req.header)),
       hKey: "User-agent",
       hValue: "Mozilla",
     };
   }
+
+  createArrayList(inObj){
+    
+    //check if we actually have some values to work with
+    if(inObj === null){
+      return []; //return an empty array if none
+    }
+    //else we create the array of [{key: key , value : value}]
+    let myArr = []
+    let objectArg = inObj
+    
+    let arrKeys = Object.keys(objectArg)
+    let arrValues = Object.values(objectArg)
+    let objJson ="["
+    
+    arrKeys.map((item, index, arrKeys) =>{
+      var mykey = arrKeys[index];
+      var value = arrValues[index];
+      objJson += "{ \"key\": \""+mykey+"\", \"value\" : \""+value+"\"}";
+      if(index < (arrKeys.length-1)){
+        objJson +=","
+      }
+    })
+    objJson +="]"
+    console.log(JSON.parse(objJson))
+    return JSON.parse(objJson);
+  }
+
+  postToEditAPI(){
+    let bod = this.createAPI();
+    console.log(bod)
+    axios.post(url + 'api/v1/apis/edit_api', bod)
+      .then(function (response) {
+        console.log("in axios")
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  //creates the body for the post to add api backend
+  createAPI(){
+    let thisAPI = {
+    "token": localStorage.getItem('jwtToken'),  
+    "path_id": this.state.path_id,
+    "method": this.state.method,
+    "protocol": this.state.protocol,
+    "domain": this.state.host,
+    "path": this.state.path,
+    "requests": {"header": this.createRequestFromList(this.state.headerList), 
+                  "params": this.createRequestFromList(this.state.paraList)},
+    "responses":{"status_code":200}
+    };
+    
+    return thisAPI;
+  }
+
+  //reformat the list of params and headers into api acceptable format
+  createRequestFromList(list){
+    let request = "{";
+
+    list.map((Item, index, list) => {
+      var myPairs = "\""+Item.key+ "\" : \""+Item.value+ "\""; 
+      request += myPairs;
+      if(index < list.length-1)
+      request +=", ";
+    })
+
+    request +="}";
+    console.log(request)
+    return JSON.parse(request) 
+  }
+
+  handleParaRemove = i => {
+    this.setState(state => ({
+      paraList: state.paraList.filter((row, j) => j !== i)
+    }));
+  };
 
   handleParaRemove = i => {
     this.setState(state => ({
@@ -175,10 +263,6 @@ class EditAPI extends Component {
       });
   };
 
-  handleSaveAPI(){
-    console.log("inside saving api")
-  }
-
   // handleParaOnDelete = id =>{
   //   this.setState(({ paraList }) => ({
   //     paraList: paraList.filter(ex => ex.id !== id),
@@ -217,7 +301,7 @@ class EditAPI extends Component {
               variant="contained"
               color="secondary"
               className={classes.button}
-              onClick={() =>{this.handleSaveAPI()
+              onClick={() =>{this.postToEditAPI()
                           }}
             >
               Save Change 

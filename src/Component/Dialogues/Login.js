@@ -67,6 +67,7 @@ class LogIn extends Component {
   
   FetchUserData(){
     let url = "https://www.nzbeta.com/";
+    let path = 'api/v1/users/signin'; 
     let currentComponent = this;
    //  console.log("in fetch ops")
    //  fetch('https://www.nzbeta.com/api/v1/users/signin')
@@ -78,7 +79,7 @@ class LogIn extends Component {
    //   })
    // })
 
-   fetch(url+'api/v1/users/signin', {
+   fetch(url+path, {
      method: 'POST',
      headers: {
              //"Content-Type": "application/json; charset=utf-8",
