@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Paper from '@material-ui/core/Paper';
-import Table from './Table';
+import Table from '../Support_Component/Table';
 import axios from 'axios';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -88,12 +88,7 @@ class EditAPI extends Component {
 
   initState(){
     const {Editing} = this.props;
-    let user_req = {}
-    if(Editing.user_req === undefined){
-       user_req = JSON.parse(Editing.user_req)
-    }else{
-      user_req = {params: null, header: null}
-    }
+    let user_req = JSON.parse(Editing.user_req)
     
     this.state = {
       dialogOpen: false,  //set the confirmation dialog to be close by default
@@ -295,7 +290,7 @@ class EditAPI extends Component {
             <DialogTitle id="alert-dialog-title">Continue to Edit API?</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                {JSON.stringify(response)}
+              <pre>{JSON.stringify(response, null, 2)}</pre>
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Paper from '@material-ui/core/Paper';
-import Table from './Table';
+import Table from '../Support_Component/Table';
 import axios from 'axios';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -249,7 +249,7 @@ class AddAPI extends Component {
             <DialogTitle id="alert-dialog-title">Add more API?</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                {JSON.stringify(response)}
+              <pre>{JSON.stringify(response, null, 2)}</pre>
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -6,11 +6,11 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import TestTable from "./APITest/TestTable";
-import LogIn from "./Dialogues/Login";
+import TestTable from "./API_Monitor_Component/TestTable";
+import LogIn from "./Access_Control_Component/Login";
 import Footer from "./Layout/Footer";
-import AddAPI from "./APITest/AddAPI";
-import EditAPI from './APITest/EditAPI';
+import AddAPI from "./AddAPI_Component/AddAPI";
+import EditAPI from './EditAPI_Component/EditAPI';
 
 
 const styles = theme => ({

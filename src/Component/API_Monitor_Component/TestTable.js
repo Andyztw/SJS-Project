@@ -5,25 +5,22 @@ import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
-import Tooltip from "@material-ui/core/Tooltip";
-import DeleteIcon from "@material-ui/icons/Delete";
-import { lighten } from "@material-ui/core/styles/colorManipulator";
-import Button from "@material-ui/core/Button";
-import CachedIcon from '@material-ui/icons/Cached';
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import EditIcon from '@material-ui/icons/Edit'
-import AddIcon from '@material-ui/icons/Add'
-import ResponsePanel from './ResponsePanel'
-
 import axios from 'axios'
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+import TestTableHead from './TestTableHead'
+import TestTableToolbar from './TestTableToolbar'
 
 //we set name and other settings of the column header for the table here
+/*
 const rows = [
   { id: "id", numeric: true, disablePadding: true, label: "ID"},
   { id: "testRes ", numeric: false, disablePadding: false, label: " Test Result" },
@@ -216,7 +213,7 @@ TestTableToolbar.propTypes = {
 };
 
 //give it a name so we can use it in the component
-TestTableToolbar = withStyles(toolbarStyles)(TestTableToolbar);
+TestTableToolbar = withStyles(toolbarStyles)(TestTableToolbar);*/
 
 //styles for the table body
 const styles = theme => ({
@@ -251,6 +248,8 @@ class TestTable extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      dialogOpen: false, 
+      response: {},
       selected: [], //the array holding the id of api currently selected
       data: [],     //the array holding api objects return from database.
       response: {}, //the response from posting to database
@@ -334,7 +333,7 @@ class TestTable extends Component {
       return !self.state.selected.includes(fItem.id)
     });
     console.log(newTable)
-    self.setState({ data: newTable, selected: [] });
+    self.setState({ data: newTable, selected: [], dialogOpen: true });
 
   }
 
@@ -361,7 +360,7 @@ class TestTable extends Component {
   
     let  arrLastest = arrOriginal.map(obj => arrChanged.find(obj2 => obj2.id === obj.id) || obj);
     console.log(arrLastest)
-    self.setState({ response: response, selected: [], data : arrLastest })
+    self.setState({ response: response, selected: [], data : arrLastest, dialogOpen: true })
   }
 
   handleSelectAllClick = (event, checked) => {
@@ -408,13 +407,17 @@ class TestTable extends Component {
     return myAPI;
   }
 
+  handleDialogClose = () =>{
+    this.setState({dialogOpen: false})
+  }
+
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
     const { classes, handleAddAPI, handleEdit,
     } = this.props;
 
-    const { data, selected, isLoading, error, errMsg } = this.state;
+    const { data, selected, isLoading, error, errMsg, dialogOpen, response } = this.state;
 
     return (
       <Paper className={classes.root}>
@@ -467,8 +470,26 @@ class TestTable extends Component {
             </div>
           </Fragment>
         }
-        <ResponsePanel type={"Simple"}
-          response={this.state.response} />
+        <div>
+        <Dialog
+          open={dialogOpen}
+          onClose={this.handleDialogClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Operations completed</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <pre>{JSON.stringify(response, null, 2)}</pre>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleDialogClose} color="primary">
+                Continue
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
       </Paper>
     );
   }
