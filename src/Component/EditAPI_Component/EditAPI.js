@@ -276,7 +276,8 @@ class EditAPI extends Component {
       protocol, domain, path, method, paraKey, pValue, 
       hKey, hValue, dialogOpen, response 
           } = this.state;
-          
+       console.log(dialogOpen)  
+       console.log(response) 
     return (
       <Fragment>
         <div>
@@ -289,7 +290,7 @@ class EditAPI extends Component {
             <DialogTitle id="alert-dialog-title">Continue to Edit API?</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-              <pre>{JSON.stringify(response.data, null, 2)}</pre>
+              <pre>{JSON.stringify(response, null, 2)}</pre>
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -249,7 +249,7 @@ class AddAPI extends Component {
             <DialogTitle id="alert-dialog-title">Add more API?</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-              <pre>{JSON.stringify(response.data, null, 2)}</pre>
+              <pre>{JSON.stringify(response, null, 2)}</pre>
               </DialogContentText>
             </DialogContent>
             <DialogActions>
