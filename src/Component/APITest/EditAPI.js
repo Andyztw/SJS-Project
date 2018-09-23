@@ -48,11 +48,11 @@ const style = {
 
 const protocols = [
   {
-    value: "http://",
+    value: "http",
     label: "HTTP"
   },
   {
-    value: "https://",
+    value: "https",
     label: "HTTPS"
   }
 ];
@@ -92,7 +92,7 @@ class EditAPI extends Component {
       path_id: Editing.path_id,
       method: Editing.method,
       protocol: Editing.protocol,
-      host: Editing.domain,
+      domain: Editing.domain,
       path: Editing.path,
       paraKey: "key",
       pValue: "Value",
@@ -150,7 +150,7 @@ class EditAPI extends Component {
     "path_id": this.state.path_id,
     "method": this.state.method,
     "protocol": this.state.protocol,
-    "domain": this.state.host,
+    "domain": this.state.domain,
     "path": this.state.path,
     "requests": {"header": this.createRequestFromList(this.state.headerList), 
                   "params": this.createRequestFromList(this.state.paraList)},
@@ -280,7 +280,7 @@ class EditAPI extends Component {
     const { classes, handleEditApi, handleCancel } = this.props;
     const {
       protocol,
-      host,
+      domain,
       path,
       method,
       paraKey,
@@ -377,12 +377,12 @@ class EditAPI extends Component {
 
           <Grid item xs={12} sm={4}>
             <TextField
-              onChange={this.handleChange("host")}
-              id="Host"
-              label="Host Path"
-              value={host}
+              onChange={this.handleChange("domain")}
+              id="domain"
+              label="domain Path"
+              value={domain}
               className={classes.textField}
-              helperText="Host Address of API"
+              helperText="domain Address of API"
               margin="normal"
               fullWidth
             />
@@ -407,7 +407,7 @@ class EditAPI extends Component {
                 readOnly: true
               }}
               disabled
-              value={protocol + host + path}
+              value={protocol +"://"+ domain +"/"+ path}
               label="Preview path"
               id="DiplayPath"
               name="DisplayPath"

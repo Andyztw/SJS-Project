@@ -48,11 +48,11 @@ const style = {
 
 const protocols = [
   {
-    value: "http://",
+    value: "http",
     label: "HTTP"
   },
   {
-    value: "https://",
+    value: "https",
     label: "HTTPS"
   }
 ];
@@ -71,8 +71,8 @@ const methods = [
 class AddAPI extends Component {
   state = {
     method: "GET",
-    protocol: "http://",
-    host: "www.SJS.co.nz",
+    protocol: "http",
+    domain: "www.SJS.co.nz",
     path: "src/api",
     paraKey : "Key",
     pValue: "Value",
@@ -102,15 +102,17 @@ class AddAPI extends Component {
 
   //creates the body for the post to add api backend
   createAPI(){
-    let thisAPI = {"method": this.state.method,
+    let thisAPI = {
+    "token": localStorage.getItem('jwtToken'),    
+    "method": this.state.method,
     "protocol": this.state.protocol,
-    "domain": this.state.host,
+    "domain": this.state.domain,
     "path": this.state.path,
     "requests": {"header": this.createRequestFromList(this.state.headerList), 
                   "params": this.createRequestFromList(this.state.paraList)},
     "responses":{"status_code":200}
     };
-    
+    console.log(thisAPI)
     return thisAPI;
   }
 
@@ -228,7 +230,7 @@ class AddAPI extends Component {
     const { classes, handleAdd, handleCancel } = this.props;
     const {
       protocol,
-      host,
+      domain,
       path,
       method,
       paraKey,
@@ -322,12 +324,12 @@ class AddAPI extends Component {
 
           <Grid item xs={12} sm={4}>
             <TextField
-              onChange={this.handleChange("host")}
-              id="Host"
-              label="Host Path"
-              value={host}
+              onChange={this.handleChange("domain")}
+              id="domain"
+              label="domain Path"
+              value={domain}
               className={classes.textField}
-              helperText="Host Address of API"
+              helperText="domain Address of API"
               margin="normal"
               fullWidth
             />
@@ -352,7 +354,7 @@ class AddAPI extends Component {
                 readOnly: true
               }}
               disabled
-              value={protocol + host + path}
+              value={protocol +"://"+ domain +"/"+ path}
               label="Preview path"
               id="DiplayPath"
               name="DisplayPath"

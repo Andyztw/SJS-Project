@@ -40,7 +40,12 @@ const styles = theme => ({
 });
 
 function ResponsePanel(props) {
-  const { classes, response, type } = props;
+  const { classes, response, type} = props;
+  
+  // const errCode = response.data.error;
+  // const status = response.data.message;
+  
+  
   const repsonseP = type !=="Simple"
   ? (
   <ExpansionPanelActions>
@@ -58,12 +63,12 @@ function ResponsePanel(props) {
             <Typography className={classes.heading}>Response Results: </Typography>
           </div>
           <div className={classes.column}>
-            <Typography className={classes.secondaryHeading}>success or error is shown here</Typography>
+            <Typography className={classes.secondaryHeading}>{"Status code: "+" Message: "}</Typography>
           </div>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.details}>
           <div>
-          <Typography className={classes.secondaryHeading}>the response object is stringify and printed in here!!!</Typography>
+          <Typography className={classes.secondaryHeading}>{JSON.stringify(response)}</Typography>
           </div>
         </ExpansionPanelDetails>
         <Divider />
