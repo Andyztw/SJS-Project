@@ -289,7 +289,6 @@ class TestTable extends Component {
     axios.post(url + path, bod)
       .then(function (response) {
         //after the promise is resolved, 
-        console.log("in axios testsdash")
         console.log(response.data.data)
         self.setState({
           data: response.data.data //set the data array to this state's data array.
@@ -390,7 +389,7 @@ class TestTable extends Component {
         selected.slice(selectedIndex + 1)
       );
     }
-    console.log(newSelected)
+    
     this.setState({ selected: newSelected });
   };
 
@@ -400,7 +399,6 @@ class TestTable extends Component {
     let myAPI = {};
     let id = this.state.selected[0];
     if (this.state.selected.length > 0) {
-      console.log(id)
       myAPI = this.state.data.find((item) => {
         if (item.id === id) {
           return item;

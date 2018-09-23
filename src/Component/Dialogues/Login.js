@@ -51,6 +51,7 @@ const styles = theme => ({
 });
 
 const url = "https://www.nzbeta.com/";
+
 class LogIn extends Component {
   state = {
     userName: "",
@@ -164,7 +165,7 @@ class LogIn extends Component {
               multiline
               fullWidth
               rowsMax="4"
-              style={{ "background": "red" }}
+              style={{ "background": "#FF8A80" }}
               value={this.state.errorMsg}
               InputProps={{
                 readOnly: true,

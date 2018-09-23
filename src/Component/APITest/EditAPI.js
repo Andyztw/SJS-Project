@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -8,7 +8,11 @@ import Button from "@material-ui/core/Button";
 import Paper from '@material-ui/core/Paper';
 import Table from './Table';
 import axios from 'axios';
-import ResponsePanel from './ResponsePanel'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const url = "https://www.nzbeta.com/"
 
@@ -48,11 +52,11 @@ const style = {
 
 const protocols = [
   {
-    value: "http",
+    value: "HTTP",
     label: "HTTP"
   },
   {
-    value: "https",
+    value: "HTTPS",
     label: "HTTPS"
   }
 ];
@@ -71,6 +75,7 @@ const methods = [
 class EditAPI extends Component {
 
   state = {
+    response: {}, //this holds the response back from post action for checking error status and stuff
     editIdx: -1,
     editIdxHeader : -1
   };
@@ -83,12 +88,15 @@ class EditAPI extends Component {
 
   initState(){
     const {Editing} = this.props;
+    let user_req = {}
+    if(Editing.user_req === undefined){
+       user_req = JSON.parse(Editing.user_req)
+    }else{
+      user_req = {params: null, header: null}
+    }
     
-    let user_req = JSON.parse(Editing.user_req)
-    console.log(typeof user_req.header)
-    console.log(typeof user_req.params)
-
     this.state = {
+      dialogOpen: false,  //set the confirmation dialog to be close by default
       id: Editing.id,
       method: Editing.method,
       protocol: Editing.protocol,
@@ -102,6 +110,14 @@ class EditAPI extends Component {
       hValue: "Mozilla",
     };
   }
+
+  handleDialogClickOpen = () => {
+    this.setState({ dialogOpen: true });
+  };
+
+  handleDialogClose = () => {
+    this.setState({ dialogOpen: false });
+  };
 
   createArrayList(inObj){
     
@@ -126,17 +142,19 @@ class EditAPI extends Component {
       }
     })
     objJson +="]"
-    console.log(JSON.parse(objJson))
+    
     return JSON.parse(objJson);
   }
 
   postToEditAPI(){
+    let self = this;
     let bod = this.createAPI();
-    console.log(bod)
+    
     axios.post(url + 'api/v1/apis/edit_api', bod)
       .then(function (response) {
-        console.log("in axios")
-        console.log(response);
+        self.setState({
+          dialogOpen: true, response: response
+        })
       })
       .catch(function (error) {
         console.log(error);
@@ -172,7 +190,7 @@ class EditAPI extends Component {
     })
 
     request +="}";
-    console.log(request)
+    
     return JSON.parse(request) 
   }
 
@@ -239,10 +257,7 @@ class EditAPI extends Component {
 
     var list = this.state.paraList;
     list.push(para);
-    // if (this.state.initP) {
-    //   list.shift(); //if its the initial parameter, remove the placeholder
-    //   this.setState({ initP: false }); //set the flag to be false
-    // }
+   
     this.setState(
       {
         paraList: list,
@@ -254,42 +269,45 @@ class EditAPI extends Component {
 
     var list = this.state.headerList;
     list.push(header);
-    // if (this.state.initB) {
-    //   list.shift(); //if its the initial parameter, remove the placeholder
-    //   this.setState({ initB: false }); //set the flag to be false
-    // }
+    
     this.setState(
       {
         headerList: list,
       });
   };
 
-  // handleParaOnDelete = id =>{
-  //   this.setState(({ paraList }) => ({
-  //     paraList: paraList.filter(ex => ex.id !== id),
-  //   }));
-  // }
-  //
-  // handleHeaderOnDelete = id =>{
-  //   this.setState(({ headerList }) => ({
-  //     headerList: headerList.filter(ex => ex.id !== id),
-  //   }));
-  // }
-
   render() {
-    const { classes, handleEditApi, handleCancel } = this.props;
+    const { classes, handleEditAPI, handleCancel } = this.props;
     const {
-      protocol,
-      domain,
-      path,
-      method,
-      paraKey,
-      pValue,
-      hKey,
-      hValue
-    } = this.state;
-
+      protocol, domain, path, method, paraKey, pValue, 
+      hKey, hValue, dialogOpen, response 
+          } = this.state;
+          
     return (
+      <Fragment>
+        <div>
+          <Dialog
+            open={dialogOpen}
+            onClose={this.handleDialogClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">Continue to Edit API?</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {JSON.stringify(response)}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleDialogClose} color="primary">
+                 Continue Edit
+            </Button>
+              <Button onClick={handleEditAPI} color="primary" autoFocus>
+                Finished
+            </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
       <div>
         <Grid container spacing={8}>
          <Grid item xs={12} sm={8}>
@@ -547,11 +565,9 @@ class EditAPI extends Component {
      />
               </Paper>
           </Grid>
-          <Grid item xs={12} sm={12}>
-          <ResponsePanel />
-          </Grid>
         </Grid>
       </div>
+      </Fragment>
     );
   }
   }

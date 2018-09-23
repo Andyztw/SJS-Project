@@ -48,14 +48,14 @@ class Dashboard extends Component {
       protocol: "https://",
       host: "www.nzbata.com/",
       path: "api/users/login",
-      paraList: [{key: "username", value: "test" },{key: "password", value: "test" }],
-      headerList: [{key: "Accept", value:"application/Json"},{key: "agent",value:"Mozilla"}, {key: "Content-Type", value:"application/Json"}],
+      paraList: [{ key: "username", value: "test" }, { key: "password", value: "test" }],
+      headerList: [{ key: "Accept", value: "application/Json" }, { key: "agent", value: "Mozilla" }, { key: "Content-Type", value: "application/Json" }],
     }, //default api for the tables
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
-    if(localStorage.getItem('jwtToken')){
+    if (localStorage.getItem('jwtToken')) {
       this.state.login = true;
       this.state.view = "API";
       this.state.AppView = "API Status Monitor"
@@ -100,23 +100,21 @@ class Dashboard extends Component {
   };
 
   //perform the actions when add api screen finish and revert back to monitor screen
-  handleAddAPIRequest = (new_API)=>{
-    console.log("In the adding api new api is:")
-    console.log(new_API)
+  handleAddAPIRequest = () => {
+    console.log("finished with add api, back to monitor")
     this.handleCancel()
   };
 
   //called when edit or add api screen calls the cancel button click action listener
-  handleCancel = () =>{
+  handleCancel = () => {
     this.handleChangeAPI();
   }
 
   //performed the actions when the Edit api screen finish and wants to revert to monitor screen
-  handleEditAPIRequest(newAPI){
-    console.log("inside handling editing submit: ")
-    console.log(newAPI)
+  handleEditAPIRequest = ()=> {
+    console.log("Finish editing, back to monitor ")
     this.handleCancel()
-  }
+  };
 
   //change the screen depending on the logic
   createView(v, classes) {
@@ -133,14 +131,14 @@ class Dashboard extends Component {
     }
     //If we did have login, let user select their needed views
     switch (v) {
-      case "API": 
+      case "API":
         return (
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <div className={classes.tableContainer}>
               <TestTable handleAddAPI={this.handleChangeAddAPI}
-                        handleEdit={(API)=>this.handleChangeEditAPI(API)}
-                        />
+                handleEdit={(API) => this.handleChangeEditAPI(API)}
+              />
             </div>
           </main>
         );
@@ -150,10 +148,10 @@ class Dashboard extends Component {
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <div className={classes.tableContainer}>
-            <EditAPI
-              Editing={this.state.currentAPI}
-              handleEditAPI={()=>{this.handleEditAPIRequest()}}
-                      handleCancel={()=>this.handleCancel()}
+              <EditAPI
+                Editing={this.state.currentAPI}
+                handleEditAPI={this.handleEditAPIRequest}
+                handleCancel={() => this.handleCancel()}
               />
 
             </div>
@@ -166,15 +164,15 @@ class Dashboard extends Component {
             <div className={classes.appBarSpacer} />
             <div className={classes.tableContainer}>
               <AddAPI handleAdd={this.handleAddAPIRequest}
-                      handleCancel={()=>this.handleCancel()}
-                      />
+                handleCancel={() => this.handleCancel()}
+              />
             </div>
           </main>
         );
         break;
     }
   }
-  button 
+  button
 
   render() {
     const { classes } = this.props;
@@ -200,16 +198,16 @@ class Dashboard extends Component {
               >
                 SJS Testing Console v0.5 --- {this.state.AppView}
               </Typography>
-             {this.state.login?
-              <Button
-              className={classes.button}
-              variant="contained"
-              color="secondary"
-              onClick={this.handleLogout.bind(this)}>
-              Log Out
-            </Button>: null}
+              {this.state.login ?
+                <Button
+                  className={classes.button}
+                  variant="contained"
+                  color="secondary"
+                  onClick={this.handleLogout.bind(this)}>
+                  Log Out
+            </Button> : null}
             </Toolbar>
-          </AppBar>         
+          </AppBar>
           {this.createView(view, classes)}
         </div>
 
