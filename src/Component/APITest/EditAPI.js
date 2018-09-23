@@ -89,7 +89,7 @@ class EditAPI extends Component {
     console.log(typeof user_req.params)
 
     this.state = {
-      path_id: Editing.path_id,
+      id: Editing.id,
       method: Editing.method,
       protocol: Editing.protocol,
       domain: Editing.domain,
@@ -147,7 +147,7 @@ class EditAPI extends Component {
   createAPI(){
     let thisAPI = {
     "token": localStorage.getItem('jwtToken'),  
-    "path_id": this.state.path_id,
+    "path_id": this.state.id,
     "method": this.state.method,
     "protocol": this.state.protocol,
     "domain": this.state.domain,

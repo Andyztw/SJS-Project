@@ -23,14 +23,9 @@ import ResponsePanel from './ResponsePanel'
 
 import axios from 'axios'
 
-//we set the column header and other settings here
+//we set name and other settings of the column header for the table here
 const rows = [
-  {
-    id: "id",
-    numeric: true,
-    disablePadding: true,
-    label: "ID"
-  },
+  { id: "id", numeric: true, disablePadding: true, label: "ID"},
   { id: "testRes ", numeric: false, disablePadding: false, label: " Test Result" },
   { id: "time", numeric: false, disablePadding: false, label: "Last Run on " },
   { id: "method", numeric: false, disablePadding: false, label: "Method" },
@@ -84,7 +79,7 @@ TestTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired
 };
 
-//create the main button tool bar
+//create the main button tool bar's styles 
 const toolbarStyles = theme => ({
   root: {
     paddingRight: theme.spacing.unit
@@ -93,7 +88,7 @@ const toolbarStyles = theme => ({
     theme.palette.type === "light"
       ? {
         color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85)
+        backgroundColor: lighten(theme.palette.secondary.light, 0.5)
       }
       : {
         color: theme.palette.text.primary,
@@ -120,6 +115,7 @@ const toolbarStyles = theme => ({
   },
 });
 
+//create the toolbar to hold the main function buttons
 let TestTableToolbar = props => {
   const { numSelected, classes, AddAPI, Edit,
     Refresh, Delete, Run } = props;
@@ -219,8 +215,10 @@ TestTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired
 };
 
+//give it a name so we can use it in the component
 TestTableToolbar = withStyles(toolbarStyles)(TestTableToolbar);
 
+//styles for the table body
 const styles = theme => ({
   root: {
     width: "100%",
@@ -233,38 +231,35 @@ const styles = theme => ({
   tableWrapper: {
     overflowX: "auto",
     height: '500px'
-  }
+  },
 });
 
+const style = {
+  failTest: {
+    background : "#FF8A80"
+  },
+  passTest: {
+    background : "#B9F6CA"
+  }
+};
+
 const url = "https://www.nzbeta.com/" //name of our server 
-//remove the deleted api from the 
-const doRemoveDelete = () => {
-  console.log("in removedelete")
-  let newTable = this.state.data;
-  console.log(newTable)
 
-  newTable = newTable.filter((fItem) => {
-    return !this.state.selected.includes(fItem.path_id)
-  });
-  console.log(newTable)
-  this.setState({ data: newTable, selected: [] });
-
-}
-
-
+//the main class
 class TestTable extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      selected: [],
-      data: [],
-      response: {},
-      isLoading: true,
-      error: null,
-      errMsg: "Loading data, please wait..."
+      selected: [], //the array holding the id of api currently selected
+      data: [],     //the array holding api objects return from database.
+      response: {}, //the response from posting to database
+      isLoading: true, //set the state to either loading the data or not, to prevent concurrency problems
+      error: null,   //hold the error object 
+      errMsg: "Loading data, please wait..." //the default message for user when loading data, change to reflect errors
     };
 
+    //binding the following functions to this class
     this.fetchDashData = this.fetchDashData.bind(this);
     this.postDeleteAPI = this.postDeleteAPI.bind(this);
     this.postRunAPI = this.postRunAPI.bind(this);
@@ -272,31 +267,37 @@ class TestTable extends Component {
 
   //the codes for loading data form back end as follows 
   componentDidMount() {
+    //check if token already there, fetch it if not
     if (localStorage.getItem('jwtToken')) {
       this.fetchDashData()
     }
+    //if error occurs, record it.
     else this.setState({ errMsg: "Missing Token", error: "missing token" });
   }
 
   //for getting api dash board data
   fetchDashData() {
-    let testTable = this;
+
+    let self = this; //keep track of the table component
+    //set the state to loading true and clear all selected ids.
     this.setState({ isLoading: true, errMsg: "Loading data, please wait...", error: null, selected: [] });
-    let path = 'api/v1/dashboard'
+    let path = 'api/v1/dashboard' //the path name to the required api call
 
-    let bod = { "token": localStorage.getItem('jwtToken') };
+    let bod = { "token": localStorage.getItem('jwtToken') }; //set the body part of the post
 
+    //post to server using axios 
     axios.post(url + path, bod)
       .then(function (response) {
+        //after the promise is resolved, 
         console.log("in axios testsdash")
         console.log(response.data.data)
-        testTable.setState({
-          data: response.data.data
-          , isLoading: false
+        self.setState({
+          data: response.data.data //set the data array to this state's data array.
+          , isLoading: false //change the loading state to false, telling the render to paint the table
         })
       })
       .catch(function (error) {
-        testTable.setState({ error, isLoading: false, errMsg: "Failed to load data" })
+        self.setState({ error, isLoading: false, errMsg: "Failed to load data" })
       });
   }
 
@@ -314,7 +315,7 @@ class TestTable extends Component {
         console.log(response.data.error)
         if (response.data.message === "OK") {
           console.log("in if loop")
-          doRemoveDelete();
+          self.doRemoveDelete(self);
         }
       })
       .catch(function (error) {
@@ -324,43 +325,49 @@ class TestTable extends Component {
 
   }
 
+  //remove the deleted api from the 
+  doRemoveDelete(self) {
+    console.log("in removedelete")
+    let newTable = self.state.data;
+    console.log(newTable)
 
-  //  doRemoveDelete(self) {
-  // console.log("in removedelete")
-  // let newTable = self.state.data;
-  // console.log(newTable)
+    newTable = newTable.filter((fItem) => {
+      return !self.state.selected.includes(fItem.id)
+    });
+    console.log(newTable)
+    self.setState({ data: newTable, selected: [] });
 
-  // newTable = newTable.filter((fItem) => {
-  //   return !self.state.selected.includes(fItem.path_id)
-  // });
-  // console.log(newTable)
-  // self.setState({ data: newTable, selected: [] });
-  // }
+  }
 
   //sending the run now api to backend
   postRunAPI() {
-    let testTable = this
+    let self  = this
     let path = "api/v1/apis/run_selected"
-    let bod = { "token": localStorage.getItem('jwtToken'), "selected_ids": testTable.state.selected };
+    let bod = { "token": localStorage.getItem('jwtToken'), "selected_ids": self.state.selected };
     console.log(bod)
     axios.post(url + path, bod)
       .then(function (response) {
         console.log("in axios postRun")
-        console.log(response)
-        testTable.setState({ response: response })
+        self.doUpdateRun(self, response)
       })
       .catch(function (error) {
-        testTable.setState({ error, isLoading: false, errMsg: "Failed to Post run data" })
+        self.setState({ error, isLoading: false, errMsg: "Failed to Post run data" })
       });
   }
 
-  doUpdateRun() {
-
+  doUpdateRun(self, response) {
+    console.log(response)
+    let arrOriginal = self.state.data;
+    let arrChanged = response.data.data;
+  
+    let  arrLastest = arrOriginal.map(obj => arrChanged.find(obj2 => obj2.id === obj.id) || obj);
+    console.log(arrLastest)
+    self.setState({ response: response, selected: [], data : arrLastest })
   }
 
   handleSelectAllClick = (event, checked) => {
     if (checked) {
-      this.setState(state => ({ selected: state.data.map(n => n.path_id) }));
+      this.setState(state => ({ selected: state.data.map(n => n.id) }));
       return;
     }
     this.setState({ selected: [] });
@@ -395,7 +402,7 @@ class TestTable extends Component {
     if (this.state.selected.length > 0) {
       console.log(id)
       myAPI = this.state.data.find((item) => {
-        if (item.path_id === id) {
+        if (item.id === id) {
           return item;
         }
       });
@@ -431,23 +438,24 @@ class TestTable extends Component {
                 />
                 <TableBody>
                   {data.map(dataItem => {
-                    const isSelected = this.isSelected(dataItem.path_id);
+                    const isSelected = this.isSelected(dataItem.id);
                     var lastRun = new Date(parseInt(dataItem.timestamp))
                     return (
                       <TableRow
                         hover
-                        onClick={event => this.handleClick(event, dataItem.path_id)}
+                        onClick={event => this.handleClick(event, dataItem.id)}
                         role="checkbox"
                         aria-checked={isSelected}
                         tabIndex={-1}
-                        key={+dataItem.path_id}
+                        key={+dataItem.id}
+                        style = { dataItem.passed > 0 ? style.passTest: style.failTest}
                         selected={isSelected}
                       >
                         <TableCell padding="checkbox">
                           <Checkbox checked={isSelected} />
                         </TableCell>
                         <TableCell numeric component="th" scope="row" padding="none">
-                          {+dataItem.path_id}
+                          {+dataItem.id}
                         </TableCell>
                         <TableCell>{dataItem.passed > 0 ? "Pass" : "Fail"}</TableCell>
                         <TableCell >{lastRun.toLocaleString()}</TableCell>

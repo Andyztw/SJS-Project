@@ -11,6 +11,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 import TextField from "@material-ui/core/TextField"
+import axios from 'axios'
 
 const styles = theme => ({
   layout: {
@@ -49,11 +50,11 @@ const styles = theme => ({
   }
 });
 
+const url = "https://www.nzbeta.com/";
 class LogIn extends Component {
   state = {
     userName: "",
     Pword: "",
-    privi: "Admin",
     valid: false,
     errorMsg: "",
     showErr: false
@@ -61,51 +62,66 @@ class LogIn extends Component {
 
   constructor(props) {
     super(props);
-    this.FetchUserData = this.FetchUserData.bind(this);
+    this.FetchToken = this.FetchToken.bind(this);
   }
 
-  
-  FetchUserData(){
-    let url = "https://www.nzbeta.com/";
-    let path = 'api/v1/users/signin'; 
+
+  FetchToken() {
+    
+    let path = 'api/v1/users/signin';
     let currentComponent = this;
-   //  console.log("in fetch ops")
-   //  fetch('https://www.nzbeta.com/api/v1/users/signin')
-   // .then((response) => response.json())
-   // .then((res)=>{
-   //   console.log(res)
-   //   this.setState({
-   //     data: res
-   //   })
-   // })
+    let bod = {"username" : this.state.userName, "password" : this.state.Pword}
 
-   fetch(url+path, {
-     method: 'POST',
-     headers: {
-             //"Content-Type": "application/json; charset=utf-8",
-              //"Content-Type": "application/x-www-form-urlencoded",
-              //Accept : 'application/json',
-              'Content-Type': 'application/json'
-         },
-    body: JSON.stringify({"username": "test", "password": "test"}),
-    //body: "username="+this.state.userName+"&password="+this.state.Pword,
-  }).then(function(response) {
-    return response.json();
-  }).then(function(data) {
-      console.log("fetching token after response")
+    axios.post(url + path, bod)
+      .then(function (response) {
+        console.log("in axios login")
+        if(response.data.message === 'OK'){
+          console.log("before submit")
+          localStorage.setItem('jwtToken', response.data.token);
+          currentComponent.props.onSubmit();
+        }
+      })
+      .catch(function (error) {
+        currentComponent.setState({ errorMsg: "Error", showErr: true })
+        console.log(error);
+        
+      });
+    //  console.log("in fetch ops")
+    //  fetch('https://www.nzbeta.com/api/v1/users/signin')
+    // .then((response) => response.json())
+    // .then((res)=>{
+    //   console.log(res)
+    //   this.setState({
+    //     data: res
+    //   })
+    // })
 
-      if(data.message === "OK"){
-        localStorage.setItem('jwtToken', data.token);
-        currentComponent.setState({valid : true});
-      }
-  });
- }
+    // fetch(url + path, {
+    //   method: 'POST',
+    //   headers: {
+    //     //"Content-Type": "application/json; charset=utf-8",
+    //     //"Content-Type": "application/x-www-form-urlencoded",
+    //     //Accept : 'application/json',
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ "username": "test", "password": "test" }),
+    //   //body: "username="+this.state.userName+"&password="+this.state.Pword,
+    // }).then(function (response) {
+    //   return response.json();
+    // }).then(function (data) {
+    //   console.log("fetching token after response")
+
+    //   if (data.message === "OK") {
+    //     localStorage.setItem('jwtToken', data.token);
+    //     currentComponent.setState({ valid: true });
+    //   }
+    // });
+  }
   //valiadate the user input and checks if user exist and password checks out
-  checkInputNotEmpty(){
-    if(!this.state.userName || !this.state.Pword)
-    {return false;}
-    else{
-        return true;
+  checkInputNotEmpty() {
+    if (!this.state.userName || !this.state.Pword) { return false; }
+    else {
+      return true;
     }
   }
 
@@ -117,15 +133,13 @@ class LogIn extends Component {
   };
 
   handleSubmit = () => {
-    if(this.checkInputNotEmpty()){
-        if(localStorage.getItem('jwtToken') === null){
-        this.FetchUserData();
-        this.props.onSubmit({ name: this.state.userName, pri: this.state.privi, status : this.state.valid });
+    if (this.checkInputNotEmpty()) {
+      if (localStorage.getItem('jwtToken') === null) {
+        this.FetchToken();
       }
     }
-
-    else{
-      this.setState({errorMsg: "Make sure user name or password are not empty", showErr: true})
+    else {
+      this.setState({ errorMsg: "Make sure user name or password are not empty", showErr: true })
     }
 
   };
@@ -145,20 +159,20 @@ class LogIn extends Component {
             </Avatar>
 
             <Typography variant="headline">Login</Typography>
-            {this.state.showErr? <TextField
-          id="ErrorLog"
-          multiline
-          fullWidth
-          rowsMax="4"
-          style={{"background" : "red"}}
-          value={this.state.errorMsg}
-          InputProps={{
-            readOnly: true,
-          }}
-          className={classes.textField}
-          margin="normal"
-          variant="filled"
-           /> : null}
+            {this.state.showErr ? <TextField
+              id="ErrorLog"
+              multiline
+              fullWidth
+              rowsMax="4"
+              style={{ "background": "red" }}
+              value={this.state.errorMsg}
+              InputProps={{
+                readOnly: true,
+              }}
+              className={classes.textField}
+              margin="normal"
+              variant="filled"
+            /> : null}
             <form className={classes.form}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel>User name</InputLabel>
