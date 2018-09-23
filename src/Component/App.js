@@ -23,12 +23,9 @@ const styles = theme => ({
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3,
-    height: "100vh",
+    padding: theme.spacing.unit * 0.5,
+    height: "95vh",
     overflow: "auto"
-  },
-  tableContainer: {
-    height: 320
   },
   button: {
     margin: theme.spacing.unit,
@@ -42,7 +39,6 @@ class Dashboard extends Component {
     open: false, //whether to show the logout button
     view: "LOGIN", //default to the API management view, use to change to other views
     AppView: "Login Please", //the title for app bar to display which screen we are in
-    user: { id: 0, name: "None", privilge: "NONE" }, //default user profile.
     currentAPI: {
       method: "POST",
       protocol: "https://",
@@ -64,7 +60,7 @@ class Dashboard extends Component {
 
   //handle the login action
   handleLogIn = () => {
-    console.log('inside handle login')
+  
     this.setState({
       login: true,
       view: "API",
@@ -123,9 +119,7 @@ class Dashboard extends Component {
       return (
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <div className={classes.tableContainer}>
             <LogIn onSubmit={this.handleLogIn.bind(this)} />
-          </div>
         </main>
       );
     }
@@ -134,45 +128,44 @@ class Dashboard extends Component {
       case "API":
         return (
           <main className={classes.content}>
-            <div className={classes.appBarSpacer} />
-            <div className={classes.tableContainer}>
+              <div className={classes.appBarSpacer} />
               <TestTable handleAddAPI={this.handleChangeAddAPI}
                 handleEdit={(API) => this.handleChangeEditAPI(API)}
               />
-            </div>
           </main>
         );
-        break;
+        
       case "EDIT":
         return (
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
-            <div className={classes.tableContainer}>
               <EditAPI
                 Editing={this.state.currentAPI}
                 handleEditAPI={this.handleEditAPIRequest}
                 handleCancel={() => this.handleCancel()}
               />
-
-            </div>
           </main>
         );
-        break;
+        
       case "ADD":
         return (
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
-            <div className={classes.tableContainer}>
               <AddAPI handleAdd={this.handleAddAPIRequest}
                 handleCancel={() => this.handleCancel()}
               />
-            </div>
           </main>
         );
-        break;
+      default: return(
+          <main className={classes.content}>
+              <div className={classes.appBarSpacer} />
+              <TestTable handleAddAPI={this.handleChangeAddAPI}
+                handleEdit={(API) => this.handleChangeEditAPI(API)}
+              />
+          </main>
+        ); 
     }
   }
-  button
 
   render() {
     const { classes } = this.props;

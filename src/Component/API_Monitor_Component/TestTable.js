@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from "react";
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -223,11 +222,11 @@ const styles = theme => ({
     overflowX: "auto"
   },
   table: {
-    minWidth: 1020
+    minWidth: 1000
   },
   tableWrapper: {
     overflowX: "auto",
-    height: '500px'
+    height: '580px'
   },
 });
 
@@ -249,7 +248,6 @@ class TestTable extends Component {
     super(props)
     this.state = {
       dialogOpen: false, 
-      response: {},
       selected: [], //the array holding the id of api currently selected
       data: [],     //the array holding api objects return from database.
       response: {}, //the response from posting to database
@@ -417,7 +415,7 @@ class TestTable extends Component {
     const { classes, handleAddAPI, handleEdit,
     } = this.props;
 
-    const { data, selected, isLoading, error, errMsg, dialogOpen, response } = this.state;
+    const { data, selected, isLoading, errMsg, dialogOpen, response } = this.state;
 
     return (
       <Paper className={classes.root}>

@@ -75,48 +75,16 @@ class LogIn extends Component {
 
     axios.post(url + path, bod)
       .then(function (response) {
-        console.log("in axios login")
         if(response.data.message === 'OK'){
-          console.log("before submit")
           localStorage.setItem('jwtToken', response.data.token);
           currentComponent.props.onSubmit();
         }
       })
       .catch(function (error) {
-        currentComponent.setState({ errorMsg: "Error", showErr: true })
+        currentComponent.setState({ errorMsg: "Cannot authenticated user, check your data entry", showErr: true })
         console.log(error);
         
       });
-    //  console.log("in fetch ops")
-    //  fetch('https://www.nzbeta.com/api/v1/users/signin')
-    // .then((response) => response.json())
-    // .then((res)=>{
-    //   console.log(res)
-    //   this.setState({
-    //     data: res
-    //   })
-    // })
-
-    // fetch(url + path, {
-    //   method: 'POST',
-    //   headers: {
-    //     //"Content-Type": "application/json; charset=utf-8",
-    //     //"Content-Type": "application/x-www-form-urlencoded",
-    //     //Accept : 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({ "username": "test", "password": "test" }),
-    //   //body: "username="+this.state.userName+"&password="+this.state.Pword,
-    // }).then(function (response) {
-    //   return response.json();
-    // }).then(function (data) {
-    //   console.log("fetching token after response")
-
-    //   if (data.message === "OK") {
-    //     localStorage.setItem('jwtToken', data.token);
-    //     currentComponent.setState({ valid: true });
-    //   }
-    // });
   }
   //valiadate the user input and checks if user exist and password checks out
   checkInputNotEmpty() {

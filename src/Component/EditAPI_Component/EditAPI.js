@@ -121,7 +121,6 @@ class EditAPI extends Component {
       return []; //return an empty array if none
     }
     //else we create the array of [{key: key , value : value}]
-    let myArr = []
     let objectArg = inObj
     
     let arrKeys = Object.keys(objectArg)
@@ -290,7 +289,7 @@ class EditAPI extends Component {
             <DialogTitle id="alert-dialog-title">Continue to Edit API?</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-              <pre>{JSON.stringify(response, null, 2)}</pre>
+              <pre>{JSON.stringify(response.data, null, 2)}</pre>
               </DialogContentText>
             </DialogContent>
             <DialogActions>
