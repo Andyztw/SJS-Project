@@ -13,8 +13,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
-const url = "https://www.nzbeta.com/" //the server url
+import {url, addApi} from '../BackEnd/BackEndDataServices'
 
 //set the style of the textfields and other inputs
 const styles = theme => ({
@@ -102,11 +101,12 @@ class AddAPI extends Component {
     this.setState({ dialogOpen: false });
   };
 
+  //performs the posting of api information to the back end
   postToAddAPI() {
     let self = this;
     let bod = this.createAPI();
 
-    axios.post(url + 'api/v1/apis/add_api', bod)
+    axios.post(url + addApi, bod)
       .then(function (response) {
         self.setState({
           dialogOpen: true, response: response

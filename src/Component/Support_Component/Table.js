@@ -11,6 +11,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import EditIcon from '@material-ui/icons/Edit';
 import TextField from "@material-ui/core/TextField";
 
+//a helper component for use by addAPI and editAPI component to handle their list of parameters and header and their editing.
 const row = (
   dataObj,
   dataIndex,

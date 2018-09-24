@@ -14,7 +14,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-const url = "https://www.nzbeta.com/"
+import { url, editApi } from "../BackEnd/BackEndDataServices";
 
 const styles = theme => ({
   container: {
@@ -88,7 +88,11 @@ class EditAPI extends Component {
 
   initState(){
     const {Editing} = this.props;
-    let user_req = JSON.parse(Editing.user_req)
+    let user_req = {};
+    if(Editing.user_req !== undefined || Editing.user_req !== null){
+      user_req = Editing.user_req;
+    }
+    user_req = JSON.parse(user_req)
     
     this.state = {
       dialogOpen: false,  //set the confirmation dialog to be close by default
@@ -144,7 +148,7 @@ class EditAPI extends Component {
     let self = this;
     let bod = this.createAPI();
     
-    axios.post(url + 'api/v1/apis/edit_api', bod)
+    axios.post(url + editApi, bod)
       .then(function (response) {
         self.setState({
           dialogOpen: true, response: response

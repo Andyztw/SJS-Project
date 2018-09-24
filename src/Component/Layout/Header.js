@@ -6,6 +6,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import FormDialog from "../Dialogues/FormDialog";
 
+//here is the appbar for holding the header infos
 const styles = {
   root: {
     flexGrow: 1

@@ -12,6 +12,7 @@ import Footer from "./Layout/Footer";
 import AddAPI from "./AddAPI_Component/AddAPI";
 import EditAPI from './EditAPI_Component/EditAPI';
 
+//the top level component for th application.
 
 const styles = theme => ({
   root: {
@@ -36,7 +37,6 @@ const styles = theme => ({
 class Dashboard extends Component {
   state = {
     login: false, //flag the app if user is logged in
-    open: false, //whether to show the logout button
     view: "LOGIN", //default to the API management view, use to change to other views
     AppView: "Login Please", //the title for app bar to display which screen we are in
     currentAPI: {
@@ -97,7 +97,6 @@ class Dashboard extends Component {
 
   //perform the actions when add api screen finish and revert back to monitor screen
   handleAddAPIRequest = () => {
-    console.log("finished with add api, back to monitor")
     this.handleCancel()
   };
 
@@ -108,12 +107,11 @@ class Dashboard extends Component {
 
   //performed the actions when the Edit api screen finish and wants to revert to monitor screen
   handleEditAPIRequest = ()=> {
-    console.log("Finish editing, back to monitor ")
     this.handleCancel()
   };
 
-  //change the screen depending on the logic
-  createView(v, classes) {
+  //change the screen depending on the logic - argument viewOption is the choice of view, classes are passing props down
+  createView(viewOption, classes) {
     //check if the user have login yet, if not only display the login screen
     if (!this.state.login) {
       return (
@@ -124,8 +122,8 @@ class Dashboard extends Component {
       );
     }
     //If we did have login, let user select their needed views
-    switch (v) {
-      case "API":
+    switch (viewOption) {
+      case "API": 
         return (
           <main className={classes.content}>
               <div className={classes.appBarSpacer} />

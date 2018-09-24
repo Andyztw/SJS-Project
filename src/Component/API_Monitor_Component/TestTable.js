@@ -17,202 +17,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import TestTableHead from './TestTableHead'
 import TestTableToolbar from './TestTableToolbar'
-
-//we set name and other settings of the column header for the table here
-/*
-const rows = [
-  { id: "id", numeric: true, disablePadding: true, label: "ID"},
-  { id: "testRes ", numeric: false, disablePadding: false, label: " Test Result" },
-  { id: "time", numeric: false, disablePadding: false, label: "Last Run on " },
-  { id: "method", numeric: false, disablePadding: false, label: "Method" },
-  { id: "url", numeric: false, disablePadding: false, label: "Full URL of API" },
-];
-
-//a custmized header row for the table
-class TestTableHead extends Component {
-
-  render() {
-    const {
-      onSelectAllClick,
-      numSelected,
-      rowCount
-    } = this.props;
-
-    return (
-      <TableHead>
-        <TableRow>
-          <TableCell padding="checkbox"
-            style={{ 'background': 'black', 'color': 'white' }}>
-            <Checkbox
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={numSelected === rowCount}
-              onChange={onSelectAllClick}
-              style={{ 'background': 'black', 'color': 'white' }}
-            />
-          </TableCell>
-          {rows.map(row => {
-            return (
-              <TableCell
-                key={row.id}
-                numeric={row.numeric}
-                padding={row.disablePadding ? "none" : "default"}
-                style={{ 'background': 'black', 'color': 'white' }}
-              >
-                {row.label}
-
-              </TableCell>
-            );
-          }, this)}
-        </TableRow>
-      </TableHead>
-    );
-  }
-}
-
-TestTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  rowCount: PropTypes.number.isRequired
-};
-
-//create the main button tool bar's styles 
-const toolbarStyles = theme => ({
-  root: {
-    paddingRight: theme.spacing.unit
-  },
-  highlight:
-    theme.palette.type === "light"
-      ? {
-        color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.5)
-      }
-      : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark
-      },
-  spacer: {
-    flex: "1 1 100%"
-  },
-  actions: {
-    color: theme.palette.text.secondary
-  },
-  title: {
-    flex: "0 0 auto"
-  },
-  button: {
-    margin: theme.spacing.unit,
-    width: 180
-  },
-  rightIcon: {
-    marginLeft: theme.spacing.unit,
-  },
-  iconSmall: {
-    fontSize: 30,
-  },
-});
-
-//create the toolbar to hold the main function buttons
-let TestTableToolbar = props => {
-  const { numSelected, classes, AddAPI, Edit,
-    Refresh, Delete, Run } = props;
-
-  return (
-    <Toolbar
-      className={classNames(classes.root, {
-        [classes.highlight]: numSelected > 0
-      })}
-    >
-      <div className={classes.actions}>
-
-        {numSelected > 0 ? (
-          <div className="AppBarButtons">
-            <Tooltip title="Refresh display">
-              <Button variant="contained" aria-label="Refresh"
-                className={classes.button}
-                onClick={Refresh}>
-                Refresh Now
-                <CachedIcon className={classes.rightIcon} />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Add new API">
-              <Button variant="contained" aria-label="AddAPI"
-                className={classes.button}
-                color="primary"
-                onClick={AddAPI}>
-                Add New API
-                <AddIcon className={classes.rightIcon} />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Run Selected Test">
-              <Button
-                variant="contained"
-                color="primary"
-                aria-label="Selected Run"
-                className={classes.button}
-                onClick={Run}
-              >
-                Run {" " + numSelected + " API"}
-                <PlayArrowIcon className={classes.rightIcon} />
-              </Button>
-            </Tooltip>
-            {numSelected === 1 ? (
-              <Tooltip title="Edit selected API">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  aria-label="Edit"
-                  onClick={Edit}
-                  className={classes.button}
-                >
-                  Edit API
-                <EditIcon className={classes.rightIcon} />
-                </Button>
-              </Tooltip>) : null}
-            <Tooltip title="Delete selected test">
-              <Button variant="contained" color="secondary" aria-label="Delete"
-                className={classes.button}
-                onClick={Delete}>
-                Delete {" " + numSelected + " API"}
-                <DeleteIcon className={classes.rightIcon} />
-              </Button>
-            </Tooltip>
-
-          </div>
-        ) : (
-            <div className="AppBarButtons">
-
-              <Tooltip title="Refresh display">
-                <Button variant="contained" aria-label="Refresh"
-                  className={classes.button}
-                  onClick={Refresh}>
-                  Refresh Now
-                <CachedIcon className={classes.rightIcon}
-                  />
-                </Button>
-              </Tooltip>
-              <Tooltip title="Add new API">
-                <Button variant="contained" aria-label="AddAPI"
-                  className={classes.button}
-                  color="primary"
-                  onClick={AddAPI}>
-                  Add New API
-                <AddIcon className={classes.rightIcon} />
-                </Button>
-              </Tooltip>
-            </div>
-          )}
-      </div>
-    </Toolbar>
-  );
-};
-
-TestTableToolbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired
-};
-
-//give it a name so we can use it in the component
-TestTableToolbar = withStyles(toolbarStyles)(TestTableToolbar);*/
+import {url, runSelect, lockInvert, dashBoard} from '../BackEnd/BackEndDataServices'
 
 //styles for the table body
 const styles = theme => ({
@@ -232,14 +37,12 @@ const styles = theme => ({
 
 const style = {
   failTest: {
-    background : "#FF8A80"
+    background : "#FF8A80",
   },
   passTest: {
-    background : "#B9F6CA"
+    background : "white",
   }
 };
-
-const url = "https://www.nzbeta.com/" //name of our server 
 
 //the main class
 class TestTable extends Component {
@@ -278,7 +81,7 @@ class TestTable extends Component {
     let self = this; //keep track of the table component
     //set the state to loading true and clear all selected ids.
     this.setState({ isLoading: true, errMsg: "Loading data, please wait...", error: null, selected: [] });
-    let path = 'api/v1/dashboard' //the path name to the required api call
+    let path = dashBoard //the path name to the required api call
 
     let bod = { "token": localStorage.getItem('jwtToken') }; //set the body part of the post
 
@@ -297,10 +100,10 @@ class TestTable extends Component {
       });
   }
 
-  //for sending the deleted to backend
+  //for sending the deleted ids to backend
   postDeleteAPI() {
     let self = this
-    let path = "api/v1/apis/invert_lock"
+    let path = lockInvert
     let bod = { "token": localStorage.getItem('jwtToken'), "selected_ids": self.state.selected };
     console.log(bod)
     axios.post(url + path, bod)
@@ -311,7 +114,7 @@ class TestTable extends Component {
         console.log(response.data.error)
         if (response.data.message === "OK") {
           console.log("in if loop")
-          self.doRemoveDelete(self);
+          self.doRemoveDelete(self , response);
         }
       })
       .catch(function (error) {
@@ -321,8 +124,8 @@ class TestTable extends Component {
 
   }
 
-  //remove the deleted api from the 
-  doRemoveDelete(self) {
+  //remove the deleted api from the table view
+  doRemoveDelete(self, response) {
     console.log("in removedelete")
     let newTable = self.state.data;
     console.log(newTable)
@@ -331,14 +134,14 @@ class TestTable extends Component {
       return !self.state.selected.includes(fItem.id)
     });
     console.log(newTable)
-    self.setState({ data: newTable, selected: [], dialogOpen: true });
+    self.setState({ data: newTable, selected: [], dialogOpen: true, response: response });
 
   }
 
-  //sending the run now api to backend
+  //sending the run now api ids to backend
   postRunAPI() {
     let self  = this
-    let path = "api/v1/apis/run_selected"
+    let path = runSelect
     let bod = { "token": localStorage.getItem('jwtToken'), "selected_ids": self.state.selected };
     console.log(bod)
     axios.post(url + path, bod)
@@ -351,6 +154,7 @@ class TestTable extends Component {
       });
   }
 
+  //updates the status of test runs after finish running api 
   doUpdateRun(self, response) {
     console.log(response)
     let arrOriginal = self.state.data;
@@ -361,6 +165,7 @@ class TestTable extends Component {
     self.setState({ response: response, selected: [], data : arrLastest, dialogOpen: true })
   }
 
+  //when user click on the header check box, decide whether to add all ids or remove all from selected array
   handleSelectAllClick = (event, checked) => {
     if (checked) {
       this.setState(state => ({ selected: state.data.map(n => n.id) }));
@@ -369,6 +174,7 @@ class TestTable extends Component {
     this.setState({ selected: [] });
   };
 
+  //when user click on a row, switch the state of the check box on that row, update the selected array to remove or add it
   handleClick = (event, id) => {
     const { selected } = this.state;
     const selectedIndex = selected.indexOf(id);
@@ -392,7 +198,7 @@ class TestTable extends Component {
 
   //grabbing the selected api object to pass to edit  
   getSelectedAPIObj() {
-
+    //use the id stored in the selected array and search the data array for its object
     let myAPI = {};
     let id = this.state.selected[0];
     if (this.state.selected.length > 0) {
@@ -405,10 +211,12 @@ class TestTable extends Component {
     return myAPI;
   }
 
+  //when the alert dialog is close by user
   handleDialogClose = () =>{
     this.setState({dialogOpen: false})
   }
 
+  //do a check of an id to see if its in the selected array, return true when the index is not -1
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
@@ -446,7 +254,7 @@ class TestTable extends Component {
                         role="checkbox"
                         aria-checked={isSelected}
                         tabIndex={-1}
-                        key={+dataItem.id}
+                        key={dataItem.id}
                         style = { dataItem.passed > 0 ? style.passTest: style.failTest}
                         selected={isSelected}
                       >
@@ -459,7 +267,7 @@ class TestTable extends Component {
                         <TableCell>{dataItem.passed > 0 ? "Pass" : "Fail"}</TableCell>
                         <TableCell >{lastRun.toLocaleString()}</TableCell>
                         <TableCell >{dataItem.method}</TableCell>
-                        <TableCell >{dataItem.protocol + "//" + dataItem.domain + "/" + dataItem.path}</TableCell>
+                        <TableCell >{dataItem.protocol + "://" + dataItem.domain + "/" + dataItem.path}</TableCell>
                       </TableRow>
                     );
                   })}

@@ -1,105 +1,11 @@
-import decode from 'jwt-decode';
 
-const url = "https://www.nzbeta.com/";
-const signIn = 'api/v1/users/signin';
-const addApi = 'api/v1/apis/add_api';
-const dashBoard = 'api/v1/dashboard';
-const runAll = 'api/v1/apis/run_all';
-const runSelect = "api/v1/apis/run_selected";
-const LockInvert = 'api/v1/apis/invert_lock';
+//path names of domain and api paths to reach backend server
 
-export default class BackEndDataServices {
-    // Initializing important variables
-    constructor(domain) {
-        this.fetch = this.fetch.bind(this) // React binding stuff
-        this.login = this.login.bind(this)
-        this.getProfile = this.getProfile.bind(this)
-    }
-
-    login(username, password) {
-        // Get a token from api server using the fetch api
-        return this.fetch(url+signIn, {
-            method: 'POST',
-            body: JSON.stringify({
-                username,
-                password
-            })
-        }).then(res => {
-            this.setToken(res.token) // Setting the token in localStorage
-            return Promise.resolve(res);
-        })
-    }
-
-    loggedIn() {
-        // Checks if there is a saved token and it's still valid
-        const token = this.getToken() // GEtting token from localstorage
-        return !!token && !this.isTokenExpired(token) // handwaiving here
-    }
-
-    isTokenExpired(token) {
-        try {
-            const decoded = decode(token);
-            if (decoded.exp < Date.now() / 1000) { // Checking if token is expired. N
-                return true;
-            }
-            else
-                return false;
-        }
-        catch (err) {
-            return false;
-        }
-    }
-
-    setToken(Token) {
-        // Saves user token to localStorage
-        localStorage.setItem('jwtToken', idToken)
-    }
-
-    getToken() {
-        // Retrieves the user token from localStorage
-        return localStorage.getItem('jwtToken')
-    }
-
-    logout() {
-        // Clear user token and profile data from localStorage
-        localStorage.removeItem('jwtToken');
-    }
-
-    getProfile() {
-        // Using jwt-decode npm package to decode the token
-        return decode(this.getToken());
-    }
-
-
-    fetch(url, options) {
-        // performs api calls sending the required authentication headers
-        const headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-
-        // Setting Authorization header
-        // Authorization: Bearer xxxxxxx.xxxxxxxx.xxxxxx
-        if (this.loggedIn()) {
-            headers['Authorization'] = 'Bearer ' + this.getToken()
-        }
-
-        return fetch(url, {
-            headers,
-            ...options
-        })
-            .then(this._checkStatus)
-            .then(response => response.json())
-    }
-
-    _checkStatus(response) {
-        // raises an error in case response status is not a success
-        if (response.status >= 200 && response.status < 300) { // Success status lies between 200 to 300
-            return response
-        } else {
-            var error = new Error(response.statusText)
-            error.response = response
-            throw error
-        }
-    }
-}
+export const url = "https://www.nzbeta.com/";
+export const signIn = 'api/v1/users/signin';
+export const addApi = 'api/v1/apis/add_api';
+export const runAll = 'api/v1/apis/run_all';
+export const runSelect = "api/v1/apis/run_selected";
+export const lockInvert = 'api/v1/apis/invert_lock';
+export const editApi = 'api/v1/apis/edit_api'; 
+export const dashBoard = 'api/v1/dashboard';
