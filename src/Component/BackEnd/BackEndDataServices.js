@@ -2,8 +2,8 @@
 //path names of domain and api paths to reach backend server
 
 //path of the domain host address
-//export const url = "http://localhost:8900/";
-export const url = "https://www.nzbeta.com/";
+export const url = "http://localhost:8900/";
+//export const url = "https://www.nzbeta.com/";
 
 //path to the signin api call
 export const signIn = 'api/v1/users/signin';
