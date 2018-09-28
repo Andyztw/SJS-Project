@@ -15,7 +15,7 @@ import AddIcon from '@material-ui/icons/Add'
 //create the main button tool bar's styles 
 const toolbarStyles = theme => ({
     root: {
-        paddingRight: theme.spacing.unit
+        paddingRight: theme.spacing.unit,
     },
     highlight:
         theme.palette.type === "light"
