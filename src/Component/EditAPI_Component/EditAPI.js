@@ -89,15 +89,18 @@ class EditAPI extends Component {
   initState(){
     const {Editing} = this.props;
     let user_req = {};
+    let params = []; 
+    let header = [];
 
     //perform a check to make sure the user_req property is not null or non existing
-    if(Editing.user_req !== undefined || Editing.user_req !== null){
+    //then check and create the array of header and parameters if they are not undefined
+    if(Editing.user_req !== null){
+      //creates the params and header array if user_req is not null
       user_req = JSON.parse(Editing.user_req) //if it exist, parse it to a object
+      params = (typeof user_req.params === undefined? []:this.createArrayList(user_req.params))
+      header = (typeof user_req.header === undefined? []:this.createArrayList(user_req.header))
     }
-    else{
-      user_req = {params: undefined, header: undefined}; //else create an empty object in its place
-    }
-    
+
     this.state = {
       dialogOpen: false,  //set the confirmation dialog to be close by default
       id: Editing.id, //the id of the API being edited
@@ -107,8 +110,8 @@ class EditAPI extends Component {
       path: Editing.path, //the path of the API relative to the domain
       paraKey: "key", //hold the value in the parameter key textfield
       pValue: "Value", //hold te value in the parameter value textfield
-      paraList: (user_req.params === undefined? []:this.createArrayList(user_req.params)), //if the params is not undefined, call a function to create an array, else make it empty
-      headerList: (user_req.header === undefined? []:this.createArrayList(user_req.header)), //same as the params
+      paraList: params,// the params 
+      headerList: header, //same as the params
       hKey: "User-agent", //hold the value of the header key textfield
       hValue: "Mozilla", //hold the value of the header value textfield
     };
