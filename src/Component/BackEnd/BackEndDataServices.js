@@ -3,6 +3,7 @@
 
 //path of the domain host address
 export const url = "http://localhost:8900/";
+
 //export const url = "https://www.nzbeta.com/";
 
 //path to the signin api call
