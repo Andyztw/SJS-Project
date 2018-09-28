@@ -187,7 +187,7 @@ class Dashboard extends Component {
                 noWrap
                 className={classes.title}
               >
-                SJS Testing Console v0.5 --- {this.state.AppView}
+                SJS Testing Console v0.6 --- {this.state.AppView}
               </Typography>
               {this.state.login ?
                 <Button

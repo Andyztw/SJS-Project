@@ -76,48 +76,55 @@ class EditAPI extends Component {
 
   state = {
     response: {}, //this holds the response back from post action for checking error status and stuff
-    editIdx: -1,
-    editIdxHeader : -1
+    editIdx: -1, //hold the pointer to row of paras table to be edited
+    editIdxHeader : -1 //hold the pointer to the row of the header table to be edited
   };
 
   constructor(props){
       super(props);
-      this.initState();
+      this.initState(); //get the states initated
 
   }
 
   initState(){
     const {Editing} = this.props;
     let user_req = {};
+
+    //perform a check to make sure the user_req property is not null or non existing
     if(Editing.user_req !== undefined || Editing.user_req !== null){
-      user_req = Editing.user_req;
+      user_req = JSON.parse(Editing.user_req) //if it exist, parse it to a object
     }
-    user_req = JSON.parse(user_req)
+    else{
+      user_req = {params: undefined, header: undefined}; //else create an empty object in its place
+    }
     
     this.state = {
       dialogOpen: false,  //set the confirmation dialog to be close by default
-      id: Editing.id,
-      method: Editing.method,
-      protocol: Editing.protocol,
-      domain: Editing.domain,
-      path: Editing.path,
-      paraKey: "key",
-      pValue: "Value",
-      paraList: (user_req.params === undefined? []:this.createArrayList(user_req.params)),
-      headerList: (user_req.header === undefined? []:this.createArrayList(user_req.header)),
-      hKey: "User-agent",
-      hValue: "Mozilla",
+      id: Editing.id, //the id of the API being edited
+      method: Editing.method, //the method of the API
+      protocol: Editing.protocol, // the protocol of the API
+      domain: Editing.domain, //the domain address of the API
+      path: Editing.path, //the path of the API relative to the domain
+      paraKey: "key", //hold the value in the parameter key textfield
+      pValue: "Value", //hold te value in the parameter value textfield
+      paraList: (user_req.params === undefined? []:this.createArrayList(user_req.params)), //if the params is not undefined, call a function to create an array, else make it empty
+      headerList: (user_req.header === undefined? []:this.createArrayList(user_req.header)), //same as the params
+      hKey: "User-agent", //hold the value of the header key textfield
+      hValue: "Mozilla", //hold the value of the header value textfield
     };
   }
 
+  //opens the dialog screen when user calls this function , by setting state od dialogOpen to true
   handleDialogClickOpen = () => {
     this.setState({ dialogOpen: true });
   };
 
+  //closes the dialog by setting the state of dialogOpen to false
   handleDialogClose = () => {
     this.setState({ dialogOpen: false });
   };
 
+  //create an array of key value objects for use in the parameter and headers display and edit table.
   createArrayList(inObj){
     
     //check if we actually have some values to work with
@@ -131,6 +138,7 @@ class EditAPI extends Component {
     let arrValues = Object.values(objectArg)
     let objJson ="["
     
+    //we will create a string in form of [{key: key, value: value},...], and parse it into an object
     arrKeys.map((item, index, arrKeys) =>{
       var mykey = arrKeys[index];
       var value = arrValues[index];
@@ -141,15 +149,18 @@ class EditAPI extends Component {
     })
     objJson +="]"
     
-    return JSON.parse(objJson);
+    return JSON.parse(objJson); //return the string as an object by parsing it into a JSON object.
   }
 
+  //build the new API information by gathering value from the various states and post it to the call.
   postToEditAPI(){
-    let self = this;
-    let bod = this.createAPI();
+    let self = this; //keep a reference to this component for use inside promise returned 
+    let bod = this.createAPI(); //create the body of the post to the back end
     
+    //use axios to post, use the url and editAPI paths, and the body created by createAPI.
     axios.post(url + editApi, bod)
       .then(function (response) {
+        //after the reponse is resolved, pop the dialog to let user see it and choose next move
         self.setState({
           dialogOpen: true, response: response
         })
@@ -162,21 +173,21 @@ class EditAPI extends Component {
   //creates the body for the post to add api backend
   createAPI(){
     let thisAPI = {
-    "token": localStorage.getItem('jwtToken'),  
+    "token": localStorage.getItem('jwtToken'),  //get and add the jwtToken for the job
     "path_id": this.state.id,
     "method": this.state.method,
     "protocol": this.state.protocol,
     "domain": this.state.domain,
     "path": this.state.path,
-    "requests": {"header": this.createRequestFromList(this.state.headerList), 
-                  "params": this.createRequestFromList(this.state.paraList)},
+    "requests": {"header": this.createRequestFromList(this.state.headerList), //change the object into a usable form for backend
+                  "params": this.createRequestFromList(this.state.paraList)}, //same as above
     "responses":{"status_code":200}
     };
     
     return thisAPI;
   }
 
-  //reformat the list of params and headers into api acceptable format
+  //reformat the list object of parameters array and headers array into backend acceptable format
   createRequestFromList(list){
     let request = "{";
 
@@ -189,29 +200,35 @@ class EditAPI extends Component {
 
     request +="}";
     
-    return JSON.parse(request) 
+    return JSON.parse(request) //returns the new object
   }
 
+  /*remove the parameter selected by user when they click on the trash button, using filter and the id(i) provided in the argument.
+    and set the state of the paraList to the returned array from filter, which only returns objects with id not equal to the argument i
+    */
   handleParaRemove = i => {
     this.setState(state => ({
       paraList: state.paraList.filter((row, j) => j !== i)
     }));
   };
 
-  handleParaRemove = i => {
-    this.setState(state => ({
-      paraList: state.paraList.filter((row, j) => j !== i)
-    }));
-  };
-
+  /*Change the state of whether we are editing a row in the parameters table, tells render to use editable textfield in the table.
+    and tells table which row to be edited, the arguement i being the row number.
+  */
   startParaEditing = i => {
     this.setState({ editIdx: i });
   };
 
+  /*Tells the app to stop the editing of selected row in the parameter table, by setting editIdx to -1, render will change table row to 
+    non editable with the changed value.
+    */
   stopParaEditing = () => {
     this.setState({ editIdx: -1 });
   };
 
+  /* updates the edited row to the state, to save the changes, argument i is the row number of the changed object.
+    argument e is the event that triggers this call, e.g. button pressed, argument name is the name of the key.
+    */
   handleParaChange = (e, name, i) => {
     const { value } = e.target;
     this.setState(state => ({
@@ -221,20 +238,24 @@ class EditAPI extends Component {
     }));
   };
 
+  //same as the remove parameters function, but for the headers array this time
   handleHeaderRemove = i => {
     this.setState(state => ({
       headerList: state.headerList.filter((row, j) => j !== i)
     }));
   };
 
+  //same as parameter starting editing
   startHeaderEditing = i => {
     this.setState({ editIdxHeader: i });
   };
 
+  //same as parameters stop editing
   stopHeaderEditing = () => {
     this.setState({ editIdxHeader: -1 });
   };
 
+  //same as the parameters's similar function
   handleHeaderChange = (e, name, i) => {
     const { value } = e.target;
     this.setState(state => ({
@@ -244,24 +265,27 @@ class EditAPI extends Component {
     }));
   };
 
+  //handles the changes in the other textfields such as domain, path, protocol and method
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value
     });
   };
 
+  //use to add more parameter key value pairs, upates the paraList array in the state
   createParaList = () => {
     var para = { key: this.state.paraKey, value: this.state.pValue };
 
     var list = this.state.paraList;
-    list.push(para);
+    list.push(para); //add the new object into the array as the last element
    
     this.setState(
       {
-        paraList: list,
+        paraList: list, //set the state to reflect the change
       });
   };
 
+  //same as the parameter function
   createHeaderList = () => {
     let header = {key: this.state.hKey, value : this.state.hValue};
 
@@ -280,8 +304,7 @@ class EditAPI extends Component {
       protocol, domain, path, method, paraKey, pValue, 
       hKey, hValue, dialogOpen, response 
           } = this.state;
-       console.log(dialogOpen)  
-       console.log(response) 
+       
     return (
       <Fragment>
         <div>

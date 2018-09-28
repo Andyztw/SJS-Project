@@ -80,7 +80,8 @@ class LogIn extends Component {
     let path = signIn; //path of the api call
     let currentComponent = this; //keep track of the current componet
     let bod = {"username" : this.state.userName, "password" : this.state.Pword} //crate the body of the post action
-
+    console.log(url)
+    console.log(path)
     //axios will post the bod Json object to the combined url and path.  
     axios.post(url + path, bod)
       .then(function (response) {
