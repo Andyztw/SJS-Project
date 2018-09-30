@@ -17,7 +17,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import TestTableHead from './TestTableHead'
 import TestTableToolbar from './TestTableToolbar'
-import {url, runSelect, lockInvert, dashBoard} from '../BackEnd/BackEndDataServices'
+import {url, runSelect, lockInvert, dashBoard, getAccessToken} from '../BackEnd/BackEndDataServices'
 
 //styles for the table body
 const styles = theme => ({
@@ -68,7 +68,7 @@ class TestTable extends Component {
   //the codes for loading data form back end as follows 
   componentDidMount() {
     //check if token already there, fetch it if not
-    if (localStorage.getItem('jwtToken')) {
+    if (getAccessToken()) {
       this.fetchDashData()
     }
     //if error occurs, record it.
@@ -83,7 +83,7 @@ class TestTable extends Component {
     this.setState({ isLoading: true, errMsg: "Loading data, please wait...", error: null, selected: [] });
     let path = dashBoard //the path name to the required api call
 
-    let bod = { "token": localStorage.getItem('jwtToken') }; //set the body part of the post
+    let bod = { "token": getAccessToken() }; //set the body part of the post
 
     //post to server using axios 
     axios.post(url + path, bod)
@@ -104,7 +104,7 @@ class TestTable extends Component {
   postDeleteAPI() {
     let self = this
     let path = lockInvert
-    let bod = { "token": localStorage.getItem('jwtToken'), "selected_ids": self.state.selected };
+    let bod = { "token": getAccessToken(), "selected_ids": self.state.selected };
     console.log(bod)
     axios.post(url + path, bod)
       .then(function (response) {
@@ -142,7 +142,7 @@ class TestTable extends Component {
   postRunAPI() {
     let self  = this
     let path = runSelect
-    let bod = { "token": localStorage.getItem('jwtToken'), "selected_ids": self.state.selected };
+    let bod = { "token": getAccessToken(), "selected_ids": self.state.selected };
     console.log(bod)
     axios.post(url + path, bod)
       .then(function (response) {

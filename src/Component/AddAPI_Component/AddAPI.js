@@ -13,7 +13,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {url, addApi} from '../BackEnd/BackEndDataServices'
+import {url, addApi, getAccessToken} from '../BackEnd/BackEndDataServices'
 
 //set the style of the textfields and other inputs
 const styles = theme => ({
@@ -120,7 +120,7 @@ class AddAPI extends Component {
   //creates the body Json object for the post to add api backend
   createAPI() {
     let thisAPI = {
-      "token": localStorage.getItem('jwtToken'),
+      "token": getAccessToken(),
       "method": this.state.method,
       "protocol": this.state.protocol,
       "domain": this.state.domain,

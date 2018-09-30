@@ -14,7 +14,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import { url, editApi } from "../BackEnd/BackEndDataServices";
+import { url, editApi, getAccessToken } from "../BackEnd/BackEndDataServices";
 
 const styles = theme => ({
   container: {
@@ -176,7 +176,7 @@ class EditAPI extends Component {
   //creates the body for the post to add api backend
   createAPI(){
     let thisAPI = {
-    "token": localStorage.getItem('jwtToken'),  //get and add the jwtToken for the job
+    "token": getAccessToken(),  //get and add the jwtToken for the job
     "path_id": this.state.id,
     "method": this.state.method,
     "protocol": this.state.protocol,

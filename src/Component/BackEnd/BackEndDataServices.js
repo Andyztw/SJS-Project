@@ -29,6 +29,31 @@ export const editApi = 'api/v1/apis/edit_api';
 //path to the retrieve API test dashboard data call
 export const dashBoard = 'api/v1/dashboard';
 
+//set the name of the token for storage purposes
+const tokenName = 'jwtToken';
 
+//a shared funcitons to storing the JwtToken for database access.
+export function getAccessToken(){
+
+    //you can change the way the app store the token, per session base or until logout
+    return localStorage.getItem(tokenName)
+    //return sessionStorage.getItem(tokenName)
+}
+
+//in this function you can change the way the JWT Token is stored.
+export function saveAccessToken(token){
+    //either local or session or other customized ways
+    localStorage.setItem(tokenName, token)
+    //or session if needed
+    //sessionStorage.setItem(tokenName, token)
+}
+
+//clearing the token from application 
+export function clearToken(){
+    //local storage 
+    localStorage.removeItem(tokenName)
+    //or session storage
+    //sessionStorage.removeItem(tokenName)
+}
 
 

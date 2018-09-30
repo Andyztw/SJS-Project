@@ -13,7 +13,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import TextField from "@material-ui/core/TextField"
 import axios from 'axios'
 
-import {url, signIn} from '../BackEnd/BackEndDataServices'
+import {url, signIn, saveAccessToken, getAccessToken,} from '../BackEnd/BackEndDataServices'
 
 // This component handles the sign in of the user into the application.
 
@@ -80,13 +80,12 @@ class LogIn extends Component {
     let path = signIn; //path of the api call
     let currentComponent = this; //keep track of the current componet
     let bod = {"username" : this.state.userName, "password" : this.state.Pword} //crate the body of the post action
-    console.log(url)
-    console.log(path)
+    
     //axios will post the bod Json object to the combined url and path.  
     axios.post(url + path, bod)
       .then(function (response) {
         if(response.data.message === 'OK'){
-          localStorage.setItem('jwtToken', response.data.token);
+          saveAccessToken(response.data.token); //save the token according to designated method.
           currentComponent.props.onSubmit();
         }
       })
@@ -118,7 +117,7 @@ class LogIn extends Component {
     */
   handleSubmit = () => {
     if (this.checkInputNotEmpty()) {
-      if (localStorage.getItem('jwtToken') === null) {
+      if (getAccessToken() === null) {
         this.FetchToken();
       }
     }

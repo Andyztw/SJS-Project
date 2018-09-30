@@ -11,6 +11,7 @@ import LogIn from "./Access_Control_Component/Login";
 import Footer from "./Layout/Footer";
 import AddAPI from "./AddAPI_Component/AddAPI";
 import EditAPI from './EditAPI_Component/EditAPI';
+import {getAccessToken, clearToken } from './BackEnd/BackEndDataServices'
 
 //the top level component for th application.
 
@@ -51,7 +52,7 @@ class Dashboard extends Component {
 
   constructor(props) {
     super(props);
-    if (localStorage.getItem('jwtToken')) {
+    if (getAccessToken()) {
       this.state.login = true;
       this.state.view = "API";
       this.state.AppView = "API Status Monitor"
@@ -70,7 +71,7 @@ class Dashboard extends Component {
 
   //handle when user clicks logout button.
   handleLogout = () => {
-    localStorage.removeItem('jwtToken');
+    clearToken(); //call the designated function to clear the stored token.
     this.setState({ login: false, view: "LOGIN", AppView: "Login Please" });
   };
 
