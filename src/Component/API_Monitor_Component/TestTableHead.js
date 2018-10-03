@@ -8,10 +8,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 //we set name and other settings of the column header for the table here
 const rows = [
     { id: "id", numeric: true, disablePadding: true, label: "ID"},
-    { id: "testRes ", numeric: false, disablePadding: false, label: " Test Result" },
-    { id: "time", numeric: false, disablePadding: false, label: "Last Run on " },
-    { id: "method", numeric: false, disablePadding: false, label: "Method" },
     { id: "url", numeric: false, disablePadding: false, label: "Full URL of API" },
+    { id: "method", numeric: false, disablePadding: false, label: "Method" },
+    { id: "time", numeric: false, disablePadding: false, label: "Last Run on " },
+    { id: "testRes ", numeric: false, disablePadding: false, label: " Test Result" }
   ];
   
   //a custmized header row for the table

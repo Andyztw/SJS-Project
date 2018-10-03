@@ -264,10 +264,10 @@ class TestTable extends Component {
                         <TableCell numeric component="th" scope="row" padding="none">
                           {+dataItem.id}
                         </TableCell>
-                        <TableCell>{dataItem.passed > 0 ? "Pass" : "Fail"}</TableCell>
-                        <TableCell >{lastRun.toLocaleString()}</TableCell>
-                        <TableCell >{dataItem.method}</TableCell>
                         <TableCell >{dataItem.protocol + "://" + dataItem.domain + "/" + dataItem.path}</TableCell>
+                        <TableCell >{dataItem.method}</TableCell>
+                        <TableCell >{lastRun.toLocaleString()}</TableCell>
+                        <TableCell>{dataItem.passed > 0 ? "Pass" : "Fail"}</TableCell>
                       </TableRow>
                     );
                   })}
