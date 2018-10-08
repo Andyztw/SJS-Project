@@ -89,7 +89,7 @@ class TestTable extends Component {
     axios.post(url + path, bod)
       .then(function (response) {
         //after the promise is resolved, 
-        console.log(response.data.data)
+        
         self.setState({
           data: response.data.data //set the data array to this state's data array.
           , isLoading: false //change the loading state to false, telling the render to paint the table
@@ -105,20 +105,17 @@ class TestTable extends Component {
     let self = this
     let path = lockInvert
     let bod = { "token": getAccessToken(), "selected_ids": self.state.selected };
-    console.log(bod)
+    
     axios.post(url + path, bod)
       .then(function (response) {
-        console.log("in axios postDelete")
-        console.log(response)
-        console.log(response.data.message)
-        console.log(response.data.error)
+        
         if (response.data.message === "OK") {
-          console.log("in if loop")
+          
           self.doRemoveDelete(self , response);
         }
       })
       .catch(function (error) {
-        console.log(error)
+        
         self.setState({ error, isLoading: false, errMsg: "Failed to Post delete data" })
       });
 
@@ -126,14 +123,14 @@ class TestTable extends Component {
 
   //remove the deleted api from the table view
   doRemoveDelete(self, response) {
-    console.log("in removedelete")
+    
     let newTable = self.state.data;
-    console.log(newTable)
+    
 
     newTable = newTable.filter((fItem) => {
       return !self.state.selected.includes(fItem.id)
     });
-    console.log(newTable)
+    
     self.setState({ data: newTable, selected: [], dialogOpen: true, response: response });
 
   }
@@ -143,10 +140,10 @@ class TestTable extends Component {
     let self  = this
     let path = runSelect
     let bod = { "token": getAccessToken(), "selected_ids": self.state.selected };
-    console.log(bod)
+    
     axios.post(url + path, bod)
       .then(function (response) {
-        console.log("in axios postRun")
+        
         self.doUpdateRun(self, response)
       })
       .catch(function (error) {
@@ -156,12 +153,12 @@ class TestTable extends Component {
 
   //updates the status of test runs after finish running api 
   doUpdateRun(self, response) {
-    console.log(response)
+    
     let arrOriginal = self.state.data;
     let arrChanged = response.data.data;
   
     let  arrLastest = arrOriginal.map(obj => arrChanged.find(obj2 => obj2.id === obj.id) || obj);
-    console.log(arrLastest)
+   
     self.setState({ response: response, selected: [], data : arrLastest, dialogOpen: true })
   }
 

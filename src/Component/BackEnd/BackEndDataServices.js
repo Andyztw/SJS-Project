@@ -4,9 +4,9 @@
 //path of the domain host address
 //export const url = "http://localhost:8900/";
 
-export const url = "/";
+//export const url = "/";
 
-//export const url = "https://www.nzbeta.com/";
+export const url = "https://www.nzbeta.com/";
 
 //path to the signin api call
 export const signIn = 'api/v1/users/signin';

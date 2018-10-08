@@ -130,8 +130,8 @@ class EditAPI extends Component {
   //create an array of key value objects for use in the parameter and headers display and edit table.
   createArrayList(inObj){
     
-    //check if we actually have some values to work with
-    if(inObj === null){
+    //check if we actually have some valid values to work with
+    if(inObj === null || inObj === undefined){
       return []; //return an empty array if none
     }
     //else we create the array of [{key: key , value : value}]

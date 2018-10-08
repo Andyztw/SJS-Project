@@ -91,7 +91,6 @@ class LogIn extends Component {
       })
       .catch(function (error) {
         currentComponent.setState({ errorMsg: "Cannot authenticated user, please check your user name or password", showErr: true })
-        console.log(error);
         
       });
   }
